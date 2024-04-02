@@ -1,45 +1,56 @@
 #include "Plan.h"
 
-Plan::Plan(vec3 center, int width_vertices, int length_vertices) {
+Plan::Plan(vec3 center, float cote, int resolution) {
     this->center = center;
-    this->width_vertices = width_vertices;
-    this->length_vertices = length_vertices;
-    this->cote_distance = 10;
-    for (int i = 0; i < width_vertices; i++) {
-        vector<float> witdh_height;
-        for (int i = 0; i < length_vertices; i++) {
-            witdh_height.push_back(0);
-        }
-        heights.push_back(witdh_height);
-    }
+    this->cote = cote;
+    this->resolution = resolution;
+    generateMesh();
 }
-void Plan::setRandomHeight() {
-    for (int i = 0; i < width_vertices; i++) {
-        for (int j = 0; j < length_vertices; j++) {
-            heights[i][j] = static_cast<float>(rand()) / RAND_MAX - 0.5;
-        }
-    }
+void Plan::setCote(float cote){
+    this->cote=cote;
 }
-void Plan::drawPlan(std::vector<glm::vec3>& indexed_vertices, std::vector<unsigned short>& indices) {
-    float half_width = cote_distance / 2;
-    float half_length =  cote_distance / 2;
-    for (int i = 0; i < width_vertices; i++) {
-        for (int j = 0; j < length_vertices; j++) {
+void Plan::setResolution(int resolution){
+    this->resolution=resolution;
+}
+void Plan::setMesh(Mesh m){
+    this->m=m;
+}
+float Plan::getCote(){
+    return this->cote;
+}
+int Plan::getResolution(){
+    return this->resolution;
+}
+Mesh Plan::getMesh(){
+    return this->m;
+}
+void Plan::generateMesh() {
+    vector<glm::vec3> indexed_vertices;
+    vector<unsigned short> indices;
+    float half_width = cote / 2;
+    float half_length =  cote / 2;
+    for (int i = 0; i < resolution; i++) {
+        for (int j = 0; j < resolution; j++) {
             indexed_vertices.push_back(center +
-                                       vec3(cote_distance/length_vertices * j - half_width,
-                                            heights[i][j],
-                                            cote_distance/width_vertices * i - half_length));
+                                       vec3(cote/resolution * j - half_width,
+                                            cote/resolution * i - half_length,
+                                            0.0));
         }
     }
-    for (int i = 0; i < width_vertices - 1; i++) {
-        for (int j = 0; j < length_vertices - 1; j++) {
-            indices.push_back(i * length_vertices + j);
-            indices.push_back((i + 1) * length_vertices + j);
-            indices.push_back((i + 1) * length_vertices + j + 1);
+    for (int i = 0; i < resolution - 1; i++) {
+        for (int j = 0; j < resolution - 1; j++) {
+            indices.push_back(i * resolution + j);
+            indices.push_back((i + 1) * resolution + j);
+            indices.push_back((i + 1) * resolution + j + 1);
 
-            indices.push_back(i * length_vertices + j);
-            indices.push_back(i * length_vertices + j + 1);
-            indices.push_back((i + 1) * length_vertices + j + 1);
+            indices.push_back(i * resolution + j);
+            indices.push_back(i * resolution + j + 1);
+            indices.push_back((i + 1) * resolution + j + 1);
         }
     }
+    m.setVertices(indexed_vertices);
+    m.setIndices(indices);
+}
+void Plan::draw(){
+
 }

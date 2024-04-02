@@ -58,6 +58,8 @@ add_executable(Moteur
         Moteur/Moteur.cpp
 		Moteur/src/Plan.cpp
 		Moteur/src/Plan.h
+		Moteur/src/Mesh.cpp
+		Moteur/src/Mesh.h
 	common/shader.cpp
 	common/shader.hpp
 	common/controls.cpp

@@ -23,6 +23,7 @@ using namespace glm;
 #include <common/vboindexer.hpp>
 
 #include "src/Plan.h"
+#include "src/Mesh.h"
 
 void processInput(GLFWwindow *window);
 
@@ -113,7 +114,7 @@ int main( void )
     std::vector<unsigned short> indices; //Triangles concaténés dans une liste
     std::vector<std::vector<unsigned short> > triangles;
     std::vector<glm::vec3> indexed_vertices;
-
+    /*
     float vertices_cote=16;
     float longueur_cote=1;
     vec3 leftUp = vec3(0.0,0.0,0.0);
@@ -137,6 +138,11 @@ int main( void )
             indices.push_back((i+1)*vertices_cote+j+1);
         }
     }
+    */
+   Plan plan = Plan(vec3(0,0,0),1.f,16);
+   Mesh planMesh=plan.getMesh();
+   indexed_vertices=planMesh.getVertices();
+   indices=planMesh.getIndices();
     // Load it into a VBO
 
     GLuint vertexbuffer;

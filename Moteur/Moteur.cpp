@@ -22,6 +22,8 @@ using namespace glm;
 #include <common/objloader.hpp>
 #include <common/vboindexer.hpp>
 
+#include "src/Plan.h"
+
 void processInput(GLFWwindow *window);
 
 // settings
@@ -112,10 +114,29 @@ int main( void )
     std::vector<std::vector<unsigned short> > triangles;
     std::vector<glm::vec3> indexed_vertices;
 
-    //Chargement du fichier de maillage
-    std::string filename("chair.off");
-    loadOFF(filename, indexed_vertices, indices, triangles );
-
+    float vertices_cote=16;
+    float longueur_cote=1;
+    vec3 leftUp = vec3(0.0,0.0,0.0);
+    for (int i = 0; i < vertices_cote; i++)
+    {
+        for (int j = 0; j < vertices_cote; j++)
+        {
+            indexed_vertices.push_back(leftUp + vec3(longueur_cote/vertices_cote*i,-longueur_cote/vertices_cote*j,0.0));
+        }
+    }
+    int k=0;
+    for (int i = 0; i < vertices_cote-1; i++)
+    {
+        for (int j = 0; j < vertices_cote-1; j++)
+        {
+            indices.push_back(i*vertices_cote+j);
+            indices.push_back((i+1)*vertices_cote+j);
+            indices.push_back((i+1)*vertices_cote+j+1);
+            indices.push_back(i*vertices_cote+j);
+            indices.push_back(i*vertices_cote+j+1);
+            indices.push_back((i+1)*vertices_cote+j+1);
+        }
+    }
     // Load it into a VBO
 
     GLuint vertexbuffer;

@@ -3,6 +3,7 @@
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertices_position_modelspace;
 
+//uniform mat4 MVP;
 //TODO create uniform transformations matrices Model View Projection
 // Values that stay constant for the whole mesh.
 

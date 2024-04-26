@@ -116,25 +116,17 @@ int main( void )
     // Get a handle for our "Model View Projection" matrices uniforms
 
     /****************************************/
-    std::vector<unsigned short> indices; //Triangles concaténés dans une liste
-    std::vector<std::vector<unsigned short> > triangles;
-    std::vector<glm::vec3> indexed_vertices;
     std::vector<float> texCoord;
-    /*
-    std::string filename("sphere.off");
-    loadOFF(filename,indexed_vertices,indices,triangles);
-    */
     
-    Plan p1(vec3(0,0,0),2);
-    p1.generate(indexed_vertices,indices,texCoord);
-    
-    Mesh m1(indexed_vertices,indices);
+    Mesh m1;
+    Plan p1(vec3(0,0,0),2,1,1);
+    p1.generate(m1.indexed_vertices,m1.indices,texCoord);
     m1.init();
-    /*
-    Plan p2(vec3(1,1,0),1,1);
-    p2.drawPlan(indexed_vertices,indices,texCoord);
-    Mesh m2(indexed_vertices,indices);
-    */
+
+    Mesh m2;
+    Plan p2(vec3(1,0,0),2,1,1);
+    p2.generate(m2.indexed_vertices,m2.indices,texCoord);
+    m2.init();
 
     do{
 
@@ -168,7 +160,7 @@ int main( void )
         
 
         m1.draw();
-        //m2.draw();
+        m2.draw();
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -180,7 +172,7 @@ int main( void )
 
     // Cleanup VBO and shader
     m1.deleteBuffer();
-    //m2.deleteBuffer();
+    m2.deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
 

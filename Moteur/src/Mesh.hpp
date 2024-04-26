@@ -12,10 +12,10 @@ class Mesh{
         GLuint vertexbuffer;
         GLuint elementbuffer;
         GLuint vaoBuffer;
-        std::vector<unsigned short> indices;
-        std::vector<glm::vec3> indexed_vertices;
 
     public :
+        std::vector<unsigned short> indices;
+        std::vector<glm::vec3> indexed_vertices;
         Mesh();
         Mesh(std::vector<glm::vec3>, std::vector<unsigned short>);
         void init();

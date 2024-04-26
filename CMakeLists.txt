@@ -56,8 +56,6 @@ add_definitions(
 # Moteur
 add_executable(Moteur
         Moteur/Moteur.cpp
-		Moteur/src/Plan.cpp
-		Moteur/src/Plan.hpp
 		Moteur/src/Mesh.cpp
 		Moteur/src/Mesh.hpp
 	common/shader.cpp

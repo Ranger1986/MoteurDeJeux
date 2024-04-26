@@ -22,7 +22,6 @@ using namespace glm;
 #include <common/objloader.hpp>
 #include <common/vboindexer.hpp>
 
-#include "src/Plan.hpp"
 #include "src/Mesh.hpp"
 
 void processInput(GLFWwindow *window);
@@ -117,16 +116,10 @@ int main( void )
 
     /****************************************/
     std::vector<float> texCoord;
-    
+    std::string filename("sphere.off");
     Mesh m1;
-    Plan p1(vec3(0,0,0),2,1,1);
-    p1.generate(m1.indexed_vertices,m1.indices,texCoord);
+    loadOFF(filename,m1.indexed_vertices,m1.indices);
     m1.init();
-
-    Mesh m2;
-    Plan p2(vec3(1,0,0),2,1,1);
-    p2.generate(m2.indexed_vertices,m2.indices,texCoord);
-    m2.init();
 
     do{
 
@@ -160,7 +153,6 @@ int main( void )
         
 
         m1.draw();
-        m2.draw();
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -172,7 +164,6 @@ int main( void )
 
     // Cleanup VBO and shader
     m1.deleteBuffer();
-    m2.deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
 

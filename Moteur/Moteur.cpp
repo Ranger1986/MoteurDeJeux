@@ -22,6 +22,9 @@ using namespace glm;
 #include <common/objloader.hpp>
 #include <common/vboindexer.hpp>
 
+#include "src/Plan.hpp"
+#include "src/Mesh.hpp"
+
 void processInput(GLFWwindow *window);
 
 // settings
@@ -39,8 +42,13 @@ float lastFrame = 0.0f;
 
 //rotation
 float angle = 0.;
+float angle_coef = 1.;
 float zoom = 1.;
 /*******************************************************************************/
+
+mat4 modelMatrix;
+mat4 viewMatrix;
+mat4 projectionMatrix;
 
 int main( void )
 {
@@ -111,33 +119,22 @@ int main( void )
     std::vector<unsigned short> indices; //Triangles concaténés dans une liste
     std::vector<std::vector<unsigned short> > triangles;
     std::vector<glm::vec3> indexed_vertices;
-
-    //Chargement du fichier de maillage
-    std::string filename("chair.off");
-    loadOFF(filename, indexed_vertices, indices, triangles );
-
-    // Load it into a VBO
-
-    GLuint vertexbuffer;
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, indexed_vertices.size() * sizeof(glm::vec3), &indexed_vertices[0], GL_STATIC_DRAW);
-
-    // Generate a buffer for the indices as well
-    GLuint elementbuffer;
-    glGenBuffers(1, &elementbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
-
-    // Get a handle for our "LightPosition" uniform
-    glUseProgram(programID);
-    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
-
-
-
-    // For speed computation
-    double lastTime = glfwGetTime();
-    int nbFrames = 0;
+    std::vector<float> texCoord;
+    /*
+    std::string filename("sphere.off");
+    loadOFF(filename,indexed_vertices,indices,triangles);
+    */
+    
+    Plan p1(vec3(0,0,0),2);
+    p1.generate(indexed_vertices,indices,texCoord);
+    
+    Mesh m1(indexed_vertices,indices);
+    m1.init();
+    /*
+    Plan p2(vec3(1,1,0),1,1);
+    p2.drawPlan(indexed_vertices,indices,texCoord);
+    Mesh m2(indexed_vertices,indices);
+    */
 
     do{
 
@@ -159,46 +156,19 @@ int main( void )
         // Use our shader
         glUseProgram(programID);
 
+        /*
+        viewMatrix = lookAt(camera_position, camera_target, camera_up);
+        projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+        mat4 tempViewMat = rotate(viewMatrix, radians(45.0f), vec3(1.0, 0.0, 0.0));
+        mat4 MVP;
+        MVP = projectionMatrix * viewMatrix * modelMatrix;
+        GLuint MVPlocation = glGetUniformLocation(programID, "MVP");
+        glUniformMatrix4fv(MVPlocation, 1, GL_FALSE, &MVP[0][0]);
+        */
+        
 
-        /*****************TODO***********************/
-        // Model matrix : an identity matrix (model will be at the origin) then change
-
-        // View matrix : camera/view transformation lookat() utiliser camera_position camera_target camera_up
-
-        // Projection matrix : 45 Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-
-        // Send our transformation to the currently bound shader,
-        // in the "Model View Projection" to the shader uniforms
-
-        /****************************************/
-
-
-
-
-        // 1rst attribute buffer : vertices
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(
-                    0,                  // attribute
-                    3,                  // size
-                    GL_FLOAT,           // type
-                    GL_FALSE,           // normalized?
-                    0,                  // stride
-                    (void*)0            // array buffer offset
-                    );
-
-        // Index buffer
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
-        // Draw the triangles !
-        glDrawElements(
-                    GL_TRIANGLES,      // mode
-                    indices.size(),    // count
-                    GL_UNSIGNED_SHORT,   // type
-                    (void*)0           // element array buffer offset
-                    );
-
-        glDisableVertexAttribArray(0);
+        m1.draw();
+        //m2.draw();
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -209,8 +179,8 @@ int main( void )
            glfwWindowShouldClose(window) == 0 );
 
     // Cleanup VBO and shader
-    glDeleteBuffers(1, &vertexbuffer);
-    glDeleteBuffers(1, &elementbuffer);
+    m1.deleteBuffer();
+    //m2.deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
 

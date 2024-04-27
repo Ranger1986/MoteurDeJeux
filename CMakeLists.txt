@@ -59,8 +59,13 @@ add_definitions(
 # Moteur
 add_executable(Moteur
         Moteur/Moteur.cpp
+		Moteur/src/helper.cpp
 		Moteur/src/Mesh.cpp
 		Moteur/src/Mesh.hpp
+		Moteur/src/Node.cpp
+		Moteur/src/Node.hpp
+		Moteur/src/Transform.cpp
+		Moteur/src/Transform.hpp
 	common/shader.cpp
 	common/shader.hpp
 	common/controls.cpp

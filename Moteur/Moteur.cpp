@@ -23,6 +23,8 @@ using namespace glm;
 #include <common/vboindexer.hpp>
 
 #include "src/Mesh.hpp"
+#include "src/Node.hpp"
+#include "src/Transform.hpp"
 
 void processInput(GLFWwindow *window);
 
@@ -117,9 +119,11 @@ int main( void )
     /****************************************/
     std::vector<float> texCoord;
     std::string filename("sphere.off");
-    Mesh m1;
-    loadOFF(filename,m1.indexed_vertices,m1.indices);
-    m1.init();
+    Node scene;
+    scene.transform.translate(vec3(1,0,0));
+    Mesh * m1 = scene.mesh;
+    loadOFF(filename,m1->indexed_vertices,m1->indices);
+    scene.init();
 
     do{
 
@@ -143,12 +147,14 @@ int main( void )
 
         viewMatrix = lookAt(camera_position, camera_target, camera_up);
         projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-        mat4 MVP;
-        MVP = projectionMatrix * viewMatrix * modelMatrix;
-        GLuint MVPlocation = glGetUniformLocation(programID, "MVP");
-        glUniformMatrix4fv(MVPlocation, 1, GL_FALSE, &MVP[0][0]);
+        //mat4 MVP;
+        //MVP = projectionMatrix * viewMatrix * modelMatrix;
+        GLuint Vlocation = glGetUniformLocation(programID, "V");
+        GLuint Plocation = glGetUniformLocation(programID, "P");
+        glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
+        glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 
-        m1.draw();
+        scene.draw(programID);
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -159,7 +165,7 @@ int main( void )
            glfwWindowShouldClose(window) == 0 );
 
     // Cleanup VBO and shader
-    m1.deleteBuffer();
+    scene.deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
 

@@ -1,9 +1,9 @@
 #ifndef MESH_HPP
 #define MESH_HPP
 
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
-#include <GL/glew.h>
 #include <string>
 #include <vector>
 

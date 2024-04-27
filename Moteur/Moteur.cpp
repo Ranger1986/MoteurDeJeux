@@ -141,16 +141,12 @@ int main( void )
         // Use our shader
         glUseProgram(programID);
 
-        /*
         viewMatrix = lookAt(camera_position, camera_target, camera_up);
         projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-        mat4 tempViewMat = rotate(viewMatrix, radians(45.0f), vec3(1.0, 0.0, 0.0));
         mat4 MVP;
         MVP = projectionMatrix * viewMatrix * modelMatrix;
         GLuint MVPlocation = glGetUniformLocation(programID, "MVP");
         glUniformMatrix4fv(MVPlocation, 1, GL_FALSE, &MVP[0][0]);
-        */
-        
 
         m1.draw();
 

@@ -43,6 +43,9 @@ set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	glfw
 	GLEW_1130
+	X11
+	Xxf86vm
+	Xi
 )
 
 add_definitions(

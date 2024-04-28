@@ -5,36 +5,52 @@ Node::Node()
 {
     transform = Transform();
 }
-void Node::addChild(Node *child){
+void Node::addChild(Node *child)
+{
     children.push_back(child);
     child->setParent(this);
 }
-void Node::setParent(Node *parent){
-    this->parent=parent;
+void Node::setParent(Node *parent)
+{
+    this->parent = parent;
 }
-vector<Node *> Node::getChildren(){
+vector<Node *> Node::getChildren()
+{
     return children;
 }
-void Node::init(){
-    if (mesh!=nullptr)
+void Node::init()
+{
+    if (mesh != nullptr)
     {
         mesh->init();
     }
-    
-}
-void Node::draw(GLuint Mlocation){
-    if (mesh!=nullptr)
+    for (int i = 0; i < children.size(); i++)
     {
-        mat4 modelMatrix = transform.matMod();
-        glUniformMatrix4fv(Mlocation, 1, GL_FALSE, &modelMatrix[0][0]);
+        children[i]->init();
+    }
+}
+void Node::draw(GLuint Mlocation, mat4 modelMatrix)
+{
+    mat4 newModelMatrix = modelMatrix * transform.matMod();
+    if (mesh != nullptr)
+    {
+        glUniformMatrix4fv(Mlocation, 1, GL_FALSE, &newModelMatrix[0][0]);
         mesh->draw();
+    }
+    for (int i = 0; i < children.size(); i++)
+    {
+        children[i]->draw(Mlocation, newModelMatrix);
     }
     
 }
-void Node::deleteBuffer(){
-    if (mesh!=nullptr)
+void Node::deleteBuffer()
+{
+    if (mesh != nullptr)
     {
         mesh->deleteBuffer();
     }
-    
+    for (int i = 0; i < children.size(); i++)
+    {
+        children[i]->deleteBuffer();
+    }
 }

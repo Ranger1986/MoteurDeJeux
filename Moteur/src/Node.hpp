@@ -27,7 +27,7 @@ public:
     vector<Node *> getChildren();
 
     void init();
-    void draw(GLuint programID);
+    void draw(GLuint Mlocation, mat4 modelMatrix);
     void deleteBuffer();
 
 };

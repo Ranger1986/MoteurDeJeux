@@ -25,6 +25,7 @@ using namespace glm;
 #include "src/Mesh.hpp"
 #include "src/Node.hpp"
 #include "src/Transform.hpp"
+#include "src/Quad.hpp"
 
 void processInput(GLFWwindow *window);
 
@@ -111,20 +112,37 @@ int main( void )
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
+    std::cout << "Avant LoadShader" << std::endl;
     GLuint programID = LoadShaders( "vertex_shader.glsl", "fragment_shader.glsl" );
+    std::cout << "Après LoadShader" << std::endl;
     
+    std::cout << "Avant l'instanciation des Uniforms" << std::endl;
     GLuint Vlocation = glGetUniformLocation(programID, "V");
     GLuint Plocation = glGetUniformLocation(programID, "P");
     GLuint Mlocation = glGetUniformLocation(programID, "M");
+    std::cout << "Après l'instanciation des Uniforms" << std::endl;
 
-    std::vector<float> texCoord;
     std::string filename("sphere.off");
+
+    std::cout << "Avant l'instanciation de scene" << std::endl;
     Node scene;
     scene.transform.translate(vec3(1,0,0));
-    Mesh * m1 = scene.mesh;
-    loadOFF(filename,m1->indexed_vertices,m1->indices);
-    scene.init();
+    scene.mesh = Quad(vec3(0,0,0),1).generateMesh();
+    std::cout << "Après l'instanciation de scene" << std::endl;
+    
+    bool testAutreNode = true;
+    std::cout << "Avant l'instanciation du Node autre" << std::endl;
+    Node autre;
+    std::cout << "Après l'instanciation du Node autre" << std::endl;
+    if (testAutreNode)
+    {
+        autre.transform.translate(vec3(-1,0,0));
+        autre.mesh = Quad(vec3(0,0,0),1).generateMesh();
+        scene.addChild(&autre);
+    }
+    
 
+    scene.init();
     do{
 
         // Measure speed
@@ -150,8 +168,7 @@ int main( void )
         
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-        scene.draw(Mlocation);
-
+        scene.draw(Mlocation, modelMatrix);
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();

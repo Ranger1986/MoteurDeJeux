@@ -22,11 +22,10 @@ void Node::init(){
     }
     
 }
-void Node::draw(GLuint programID){
+void Node::draw(GLuint Mlocation){
     if (mesh!=nullptr)
     {
         mat4 modelMatrix = transform.matMod();
-        GLuint Mlocation = glGetUniformLocation(programID, "M");
         glUniformMatrix4fv(Mlocation, 1, GL_FALSE, &modelMatrix[0][0]);
         mesh->draw();
     }

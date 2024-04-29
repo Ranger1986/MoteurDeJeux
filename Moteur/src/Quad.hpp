@@ -18,7 +18,7 @@ private:
     float length;
 public:
     Quad(vec3 center, float length);
-    Mesh* generateMesh();
+    Mesh* generateMesh(GLuint texture);
     ~Quad();
 };
 #endif

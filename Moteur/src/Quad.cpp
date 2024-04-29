@@ -6,7 +6,7 @@ Quad::Quad(vec3 center, float length)
     this->length = length;
 }
 
-Mesh *Quad::generateMesh()
+Mesh *Quad::generateMesh(GLuint texture)
 {
     Mesh *result = new Mesh();
     float halfLength = length / 2;
@@ -40,6 +40,8 @@ Mesh *Quad::generateMesh()
     result->indices.push_back(1);
     result->indices.push_back(2);
     result->indices.push_back(3);
+
+    result->text = texture;
 
     return result;
 };

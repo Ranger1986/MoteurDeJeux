@@ -30,6 +30,8 @@ using namespace glm;
 #include "src/Transform.hpp"
 #include "src/Quad.hpp"
 
+#include <common/stb_image.h>
+
 void processInput(GLFWwindow *window);
 
 // settings
@@ -121,13 +123,14 @@ int main( void )
     GLuint Plocation = glGetUniformLocation(programID, "P");
     GLuint Mlocation = glGetUniformLocation(programID, "M");
 
+
     GLuint dirt_texture = loadTexture2DFromFilePath("Texture/dirt_text.png");
     GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
 
     Node scene;
     scene.transform.translate(vec3(1,0,0));
     scene.transform.scale(1.5f);
-    scene.mesh = Quad(vec3(0,0,0),1).generateMesh();
+    scene.mesh = Quad(vec3(0,0,0),1).generateMesh(dirt_texture);
     
     bool testAutreNode = true;
     Node autre;
@@ -135,24 +138,12 @@ int main( void )
     {
         autre.transform.translate(vec3(-1,0,0));
         autre.transform.scale(0.5f);
-        autre.mesh = Quad(vec3(0,0,0),1).generateMesh();
+        autre.mesh = Quad(vec3(0,0,0),1).generateMesh(stone_texture);
         scene.addChild(&autre);
-    }
-    
-    if (dirt_texture != -1) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, dirt_texture);
-        glUniform1i(glGetUniformLocation(programID, "dirt"), 0);
-    }
-    if (stone_texture != -1) {
-        glActiveTexture(GL_TEXTURE0+1);
-        glBindTexture(GL_TEXTURE_2D, stone_texture);
-        glUniform1i(glGetUniformLocation(programID, "stone"), 1);
     }
 
     scene.init();
-
-    helper::print(scene.mesh->texCoords);
+    
     do{
 
         // Measure speed

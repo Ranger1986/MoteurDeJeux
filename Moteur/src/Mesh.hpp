@@ -17,6 +17,7 @@ class Mesh{
         GLuint uv;
 
     public :
+        GLuint text;
         vector<unsigned short> indices;
         vector<vec3> indexed_vertices;
         vector<float> texCoords;

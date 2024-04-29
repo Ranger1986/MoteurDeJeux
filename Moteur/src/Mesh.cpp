@@ -65,6 +65,8 @@ void Mesh::init(){
 }
 
 void Mesh::draw(){
+    glBindTexture(GL_TEXTURE_2D, text); 
+
     glBindVertexArray(vaoBuffer);
     glEnableVertexAttribArray(0);
 

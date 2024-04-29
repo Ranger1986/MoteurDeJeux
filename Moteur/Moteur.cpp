@@ -129,8 +129,9 @@ int main(void)
     GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
 
     Node scene;
+    vector<vector<int>> map = readmap("map2.txt");
     scene.transform.scale(0.1);
-    vector<vector<int>> map = readmap("map.txt");
+    scene.transform.translate(-vec3(map.size()/2, map[0].size()/2, 0)*0.1f);
     helper::print(map);
     Quad square = Quad(vec3(0, 0, 0), 1);
     for (int i = 0; i < map.size(); i++)

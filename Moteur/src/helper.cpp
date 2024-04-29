@@ -16,8 +16,12 @@
 #include <iostream>
 
 using namespace glm;
+using namespace std;
 
-void print(mat4 matrice){
+class helper
+{
+public:
+    static void print(mat4 matrice){
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -26,4 +30,11 @@ void print(mat4 matrice){
             }
             std::cout << "|" << std::endl;
         }
-}
+    }
+
+    static void print(vector<float> uv){
+        for (int i = 0; i< uv.size() ; i+=2){
+            std::cout << "(" << uv[i] << "," << uv[i+1] << ")" << std::endl;
+        }
+    }
+};

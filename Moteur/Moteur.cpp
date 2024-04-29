@@ -20,7 +20,10 @@ using namespace glm;
 
 #include <common/shader.hpp>
 #include <common/objloader.hpp>
+#include <common/texture.hpp>
 #include <common/vboindexer.hpp>
+
+#include "src/helper.cpp"
 
 #include "src/Mesh.hpp"
 #include "src/Node.hpp"
@@ -112,37 +115,44 @@ int main( void )
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    std::cout << "Avant LoadShader" << std::endl;
     GLuint programID = LoadShaders( "vertex_shader.glsl", "fragment_shader.glsl" );
-    std::cout << "Après LoadShader" << std::endl;
     
-    std::cout << "Avant l'instanciation des Uniforms" << std::endl;
     GLuint Vlocation = glGetUniformLocation(programID, "V");
     GLuint Plocation = glGetUniformLocation(programID, "P");
     GLuint Mlocation = glGetUniformLocation(programID, "M");
-    std::cout << "Après l'instanciation des Uniforms" << std::endl;
 
-    std::string filename("sphere.off");
+    GLuint dirt_texture = loadTexture2DFromFilePath("Texture/dirt_text.png");
+    GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
 
-    std::cout << "Avant l'instanciation de scene" << std::endl;
     Node scene;
     scene.transform.translate(vec3(1,0,0));
+    scene.transform.scale(1.5f);
     scene.mesh = Quad(vec3(0,0,0),1).generateMesh();
-    std::cout << "Après l'instanciation de scene" << std::endl;
     
     bool testAutreNode = true;
-    std::cout << "Avant l'instanciation du Node autre" << std::endl;
     Node autre;
-    std::cout << "Après l'instanciation du Node autre" << std::endl;
     if (testAutreNode)
     {
         autre.transform.translate(vec3(-1,0,0));
+        autre.transform.scale(0.5f);
         autre.mesh = Quad(vec3(0,0,0),1).generateMesh();
         scene.addChild(&autre);
     }
     
+    if (dirt_texture != -1) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, dirt_texture);
+        glUniform1i(glGetUniformLocation(programID, "dirt"), 0);
+    }
+    if (stone_texture != -1) {
+        glActiveTexture(GL_TEXTURE0+1);
+        glBindTexture(GL_TEXTURE_2D, stone_texture);
+        glUniform1i(glGetUniformLocation(programID, "stone"), 1);
+    }
 
     scene.init();
+
+    helper::print(scene.mesh->texCoords);
     do{
 
         // Measure speed
@@ -168,6 +178,7 @@ int main( void )
         
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+        
         scene.draw(Mlocation, modelMatrix);
         // Swap buffers
         glfwSwapBuffers(window);
@@ -181,6 +192,8 @@ int main( void )
     scene.deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
+    glDeleteTextures(1, &dirt_texture);
+    glDeleteTextures(1, &stone_texture);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

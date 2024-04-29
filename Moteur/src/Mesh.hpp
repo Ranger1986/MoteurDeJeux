@@ -6,18 +6,22 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
+using namespace std;
+using namespace glm;
 
 class Mesh{
     private :
         GLuint vertexbuffer;
         GLuint elementbuffer;
         GLuint vaoBuffer;
+        GLuint uv;
 
     public :
-        std::vector<unsigned short> indices;
-        std::vector<glm::vec3> indexed_vertices;
+        vector<unsigned short> indices;
+        vector<vec3> indexed_vertices;
+        vector<float> texCoords;
         Mesh();
-        Mesh(std::vector<glm::vec3>, std::vector<unsigned short>);
+        Mesh(std::vector<vec3>, vector<unsigned short>);
         void init();
         void draw();
         void deleteBuffer();

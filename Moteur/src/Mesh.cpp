@@ -5,7 +5,6 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
-using namespace std;
 
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +15,9 @@ using namespace std;
 #include <common/objloader.hpp>
 
 Mesh::Mesh(){
-    indexed_vertices = vector<glm::vec3>();
+    indexed_vertices = vector<vec3>();
     indices = vector<unsigned short>();
+    texCoords = vector<float>();
 }
 
 Mesh::Mesh(vector<glm::vec3> indexed_vertices_in, vector<unsigned short> indices_in){
@@ -29,6 +29,7 @@ void Mesh::init(){
     glGenVertexArrays(1, &vaoBuffer);
     glGenBuffers(1, &vertexbuffer);
     glGenBuffers(1, &elementbuffer);
+    glGenBuffers(1,&uv);
 
     glBindVertexArray(vaoBuffer);
 
@@ -46,6 +47,19 @@ void Mesh::init(){
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0] , GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, uv);
+    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), &texCoords[0], GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(1);	
+    glVertexAttribPointer(
+        1,        // attribute
+        2,        // size
+        GL_FLOAT, // type
+        GL_FALSE, // normalized?
+        0,        // stride
+        (void *)0 // array buffer offset
+    );
 
     glBindVertexArray(0);
 }

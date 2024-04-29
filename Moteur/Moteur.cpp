@@ -9,7 +9,7 @@
 
 // Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
+GLFWwindow *window;
 
 // Include GLM
 #include <glm/glm.hpp>
@@ -30,7 +30,7 @@ using namespace glm;
 #include "src/Transform.hpp"
 #include "src/Quad.hpp"
 
-#include <common/stb_image.h>
+#include "src/mapreader.hpp"
 
 void processInput(GLFWwindow *window);
 
@@ -39,15 +39,15 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-glm::vec3 camera_position   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 camera_up    = glm::vec3(0.0f, 1.0f,  0.0f);
+glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
+float deltaTime = 0.0f; // time between current frame and last frame
 float lastFrame = 0.0f;
 
-//rotation
+// rotation
 float angle = 0.;
 float angle_coef = 1.;
 float zoom = 1.;
@@ -57,12 +57,12 @@ mat4 modelMatrix;
 mat4 viewMatrix;
 mat4 projectionMatrix;
 
-int main( void )
+int main(void)
 {
     // Initialise GLFW
-    if( !glfwInit() )
+    if (!glfwInit())
     {
-        fprintf( stderr, "Failed to initialize GLFW\n" );
+        fprintf(stderr, "Failed to initialize GLFW\n");
         getchar();
         return -1;
     }
@@ -74,9 +74,10 @@ int main( void )
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow( 1024, 768, "TP1 - GLFW", NULL, NULL);
-    if( window == NULL ){
-        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+    window = glfwCreateWindow(1024, 768, "TP1 - GLFW", NULL, NULL);
+    if (window == NULL)
+    {
+        fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
         getchar();
         glfwTerminate();
         return -1;
@@ -85,7 +86,8 @@ int main( void )
 
     // Initialize GLEW
     glewExperimental = true; // Needed for core profile
-    if (glewInit() != GLEW_OK) {
+    if (glewInit() != GLEW_OK)
+    {
         fprintf(stderr, "Failed to initialize GLEW\n");
         getchar();
         glfwTerminate();
@@ -99,7 +101,7 @@ int main( void )
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
-    glfwSetCursorPos(window, 1024/2, 768/2);
+    glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 
     // Dark blue background
     glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
@@ -110,41 +112,52 @@ int main( void )
     glDepthFunc(GL_LESS);
 
     // Cull triangles which normal is not towards the camera
-    //glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
 
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders( "vertex_shader.glsl", "fragment_shader.glsl" );
-    
+    GLuint programID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
+
     GLuint Vlocation = glGetUniformLocation(programID, "V");
     GLuint Plocation = glGetUniformLocation(programID, "P");
     GLuint Mlocation = glGetUniformLocation(programID, "M");
-
 
     GLuint dirt_texture = loadTexture2DFromFilePath("Texture/dirt_text.png");
     GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
 
     Node scene;
-    scene.transform.translate(vec3(1,0,0));
-    scene.transform.scale(1.5f);
-    scene.mesh = Quad(vec3(0,0,0),1).generateMesh(dirt_texture);
-    
-    bool testAutreNode = true;
-    Node autre;
-    if (testAutreNode)
+    scene.transform.scale(0.1);
+    vector<vector<int>> map = readmap("map.txt");
+    helper::print(map);
+    Quad square = Quad(vec3(0, 0, 0), 1);
+    for (int i = 0; i < map.size(); i++)
     {
-        autre.transform.translate(vec3(-1,0,0));
-        autre.transform.scale(0.5f);
-        autre.mesh = Quad(vec3(0,0,0),1).generateMesh(stone_texture);
-        scene.addChild(&autre);
+        for (int j = 0; j < map[i].size(); j++)
+        {
+            if (map[i][j] != 0)
+            {
+                Node * newNode = new Node();
+                newNode->transform.translate(vec3(i,j, 0));
+                if (map[i][j] == 1)
+                {
+                    newNode->mesh = square.generateMesh(dirt_texture);
+                }
+                else if (map[i][j] == 2)
+                {
+                    newNode->mesh = square.generateMesh(stone_texture);
+                }
+                scene.addChild(newNode);
+            }
+        }
     }
 
     scene.init();
-    
-    do{
+
+    do
+    {
 
         // Measure speed
         // per-frame time logic
@@ -157,7 +170,6 @@ int main( void )
         // -----
         processInput(window);
 
-
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -166,18 +178,18 @@ int main( void )
 
         viewMatrix = lookAt(camera_position, camera_target, camera_up);
         projectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-        
+
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-        
+
         scene.draw(Mlocation, modelMatrix);
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
 
     } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-           glfwWindowShouldClose(window) == 0 );
+    while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+           glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
     scene.deleteBuffer();
@@ -192,7 +204,6 @@ int main( void )
     return 0;
 }
 
-
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
@@ -200,20 +211,19 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    //Camera zoom in and out
+    // Camera zoom in and out
     float cameraSpeed = 2.5 * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera_position += cameraSpeed * camera_target;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         camera_position -= cameraSpeed * camera_target;
 
-    //TODO add translations
-
+    // TODO add translations
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.

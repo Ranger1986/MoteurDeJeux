@@ -68,6 +68,7 @@ add_executable(Moteur
 		Moteur/src/Transform.hpp
 		Moteur/src/Quad.cpp
 		Moteur/src/Quad.hpp
+		Moteur/src/mapreader.hpp
 	common/shader.cpp
 	common/shader.hpp
 	common/controls.cpp

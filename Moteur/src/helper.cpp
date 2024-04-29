@@ -37,4 +37,15 @@ public:
             std::cout << "(" << uv[i] << "," << uv[i+1] << ")" << std::endl;
         }
     }
+    static void print(vector<vector<int>> vecteur){
+        
+        for (int i = 0; i < vecteur.size(); i++)
+        {
+            for (int j = 0; j < vecteur[i].size(); j++)
+            {
+                std::cout << "|" << vecteur[i][j];
+            }
+            std::cout << "|" << std::endl;
+        }
+    }
 };

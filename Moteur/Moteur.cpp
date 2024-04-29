@@ -154,7 +154,7 @@ int main(void)
             }
         }
     }
-
+    scene.destroyChild(0);
     scene.init();
 
     do

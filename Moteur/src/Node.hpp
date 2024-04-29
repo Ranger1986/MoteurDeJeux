@@ -29,6 +29,6 @@ public:
     void init();
     void draw(GLuint Mlocation, mat4 modelMatrix);
     void deleteBuffer();
-
+    void destroyChild(int i);
 };
 #endif

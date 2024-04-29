@@ -54,3 +54,6 @@ void Node::deleteBuffer()
         children[i]->deleteBuffer();
     }
 }
+void Node::destroyChild(int index){
+    children.erase(children.begin() + index);
+}

@@ -27,7 +27,6 @@ vector<vector<int>> readmap(const std::string &path){
         }
         temp.push_back(ligne);
     } 
-    result.resize(temp.size());
     for (int i = 0; i < temp[0].size(); i++)
     {
         result.push_back(vector<int>());

@@ -57,3 +57,7 @@ void Node::deleteBuffer()
 void Node::destroyChild(int index){
     children.erase(children.begin() + index);
 }
+
+Transform Node::getWorldTransform(){
+    return Transform(this->parent->transform.matMod()*this->transform.matMod());
+}

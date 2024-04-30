@@ -1,8 +1,22 @@
 #include "Transform.hpp"
 Transform::Transform()
 {
-    this->m=mat3{1.f};
-    this->t=vec3{0.0f};
+    m=mat3{1.f};
+    t=vec3{0.0f};
+}
+Transform::Transform(mat4 matrice)
+{
+    m=mat3{1.f};
+
+    // Copie la matrice de rotation + skew + scale (3x3) dans les coins supérieurs gauche
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            m[i][j] = matrice[i][j];
+        }
+    }
+    t=vec3(matrice[3][0],matrice[3][1],matrice[3][2]);
 }
 Transform::Transform(mat3 matrice)
 {

@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
+#include "Transform.hpp"
+
 using namespace glm;
 using namespace std;
 
@@ -26,10 +28,13 @@ public:
         {
             for (int j = 0; j < 4; j++)
             {
-                std::cout << "|" << matrice[i][j];
+                std::cout << "|" << matrice[j][i];
             }
             std::cout << "|" << std::endl;
         }
+    }
+    static void print(Transform transform){
+        print(transform.matMod());
     }
 
     static void print(vector<float> uv){

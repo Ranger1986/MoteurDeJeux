@@ -29,6 +29,7 @@ using namespace glm;
 #include "src/Node.hpp"
 #include "src/Transform.hpp"
 #include "src/Quad.hpp"
+#include "src/Entity.hpp"
 
 #include "src/mapreader.hpp"
 
@@ -57,7 +58,8 @@ mat4 modelMatrix;
 mat4 viewMatrix;
 mat4 projectionMatrix;
 
-Node * player;
+Entity *obstacle;
+Entity *player;
 
 int main(void)
 {
@@ -135,7 +137,7 @@ int main(void)
     Node scene;
     vector<vector<int>> map = readmap("map2.txt");
     scene.transform.scale(0.1);
-    scene.transform.translate(-vec3(map.size()/2, map[0].size()/2, 0)*0.1f);
+    scene.transform.translate(-vec3(map.size() / 2, map[0].size() / 2, 0) * 0.1f);
     helper::print(map);
     Quad square = Quad(vec3(0, 0, 0), 1);
     for (int i = 0; i < map.size(); i++)
@@ -144,8 +146,8 @@ int main(void)
         {
             if (map[i][j] != 0)
             {
-                Node * newNode = new Node();
-                newNode->transform.translate(vec3(i,j, 0));
+                Node *newNode = new Node();
+                newNode->transform.translate(vec3(i, j, 0));
                 if (map[i][j] == 1)
                 {
                     newNode->mesh = square.generateMesh(dirt_texture);
@@ -159,21 +161,24 @@ int main(void)
         }
     }
     scene.destroyChild(0);
-    
-    Node * obstacle = new Node();
-    obstacle->mesh= square.generateMesh(obstacle_texture);
-    obstacle->transform.translate(vec3(-0.4,-0.3,0));
-    obstacle->transform.scale(0.05);
-    obstacle->init();
-    // obstacle->transform.translate(vec3(3,3,0));
-    // obstacle->transform.scale(0.5);
-    // scene.addChild(obstacle);
 
-    player = new Node();
-    player->mesh= square.generateMesh(steve_texture);
-    player->transform.translate(vec3(1,2,0));
+    obstacle = new Entity();
+    obstacle->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    obstacle->mesh = square.generateMesh(obstacle_texture);
+    // obstacle->transform.translate(vec3(-0.4,-0.3,0));
+    // obstacle->transform.scale(0.05);
+    // obstacle->init();
+    obstacle->transform.translate(vec3(3, 3, 0));
+    obstacle->transform.scale(0.5);
+    scene.addChild(obstacle);
+
+    player = new Entity();
+    player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    player->mesh = square.generateMesh(steve_texture);
+    player->transform.translate(vec3(1, 2, 0));
     player->transform.scale(0.5);
     scene.addChild(player);
+    static_cast<HitboxRectangle *>(player->hitbox);
 
     helper::print(player->getWorldTransform().matMod());
 
@@ -245,22 +250,37 @@ void processInput(GLFWwindow *window)
 
     // TODO add translations
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        player->transform.translate(10*deltaTime*vec3(0,1,0));
+        player->transform.translate(10 * deltaTime * vec3(0, 1, 0));
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        player->transform.translate(10*deltaTime*vec3(0,-1,0));
+        player->transform.translate(10 * deltaTime * vec3(0, -1, 0));
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        player->transform.translate(10*deltaTime*vec3(1,0,0));
+        player->transform.translate(10 * deltaTime * vec3(1, 0, 0));
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        player->transform.translate(10*deltaTime*vec3(-1,0,0));
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS){
-        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-    }
+        player->transform.translate(10 * deltaTime * vec3(-1, 0, 0));
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
     {
-        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+        if (rectangleToRectangle(player->getWorldHitbox(), obstacle->getWorldHitbox()))
+            std::cout << "Collision" << std::endl;
+        else
+            std::cout << "Pas Collision" << std::endl;
+        std::cout << "player" << std::endl;
+        std::cout << "min : ";
+        helper::print(player->getWorldHitbox()->min);
+        std::cout << "max : ";
+        helper::print(player->getWorldHitbox()->max);
+        std::cout << "obstacle" << std::endl;
+        std::cout << "min : ";
+        helper::print(obstacle->getWorldHitbox()->min);
+        std::cout << "max : ";
+        helper::print(obstacle->getWorldHitbox()->max);
     }
+
     camera_target = player->getWorldTransform().getTranslation();
-    camera_position = vec3(camera_target.x,camera_target.y, camera_position.z);
+    camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

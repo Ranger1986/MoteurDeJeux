@@ -20,7 +20,7 @@ private:
 public:
     // information de transformation de la Node
     Transform transform;
-    Mesh* mesh;
+    Mesh *mesh;
     Node();
     void addChild(Node *child);
     void setParent(Node *child);
@@ -30,7 +30,7 @@ public:
     void draw(GLuint Mlocation, mat4 modelMatrix);
     void deleteBuffer();
     void destroyChild(int i);
-    
+
     Transform getWorldTransform();
 };
 #endif

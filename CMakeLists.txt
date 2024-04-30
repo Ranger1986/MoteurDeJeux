@@ -60,6 +60,10 @@ add_definitions(
 add_executable(Moteur
         Moteur/Moteur.cpp
 		Moteur/src/helper.cpp
+		Moteur/src/Hitbox.cpp
+		Moteur/src/Hitbox.hpp
+		Moteur/src/Entity.cpp
+		Moteur/src/Entity.hpp
 		Moteur/src/Mesh.cpp
 		Moteur/src/Mesh.hpp
 		Moteur/src/Node.cpp

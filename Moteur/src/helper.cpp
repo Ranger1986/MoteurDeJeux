@@ -37,10 +37,12 @@ public:
         print(transform.matMod());
     }
 
-    static void print(vector<float> uv){
-        for (int i = 0; i< uv.size() ; i+=2){
-            std::cout << "(" << uv[i] << "," << uv[i+1] << ")" << std::endl;
+    static void print(vec3 vec){
+        std::cout << "(";
+        for (int i = 0; i < 3; i++){
+            std::cout << vec[i] << ",";
         }
+        std::cout << ")" << std::endl;
     }
     static void print(vector<vector<int>> vecteur){
         

@@ -61,3 +61,25 @@ void Node::destroyChild(int index){
 Transform Node::getWorldTransform(){
     return Transform(this->parent->transform.matMod()*this->transform.matMod());
 }
+HitboxRectangle * Node::getWorldHitbox(){
+    Transform t = getWorldTransform();
+    return new HitboxRectangle(hitbox, t);
+}
+vector<HitboxRectangle *> Node::getAllChildrenWorldHitbox(){
+    vector<HitboxRectangle *> result = vector<HitboxRectangle*>();
+    for (int i = 0; i < children.size(); i++)
+    {
+        vector<HitboxRectangle *> childResult = children[i]->getAllChildrenWorldHitbox();
+        for (int j = 0; j < childResult.size(); j++)
+        {
+            result.push_back(childResult[j]);
+        }
+    }
+    if (hitbox)
+    {
+        result.push_back(getWorldHitbox());
+    }
+    
+    return result;
+}
+void Node::applyPhysics(){};

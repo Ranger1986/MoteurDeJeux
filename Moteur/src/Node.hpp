@@ -4,6 +4,7 @@
 
 #include "Transform.hpp"
 #include "Mesh.hpp"
+#include "Hitbox.hpp"
 
 using namespace std;
 /**
@@ -21,6 +22,7 @@ public:
     // information de transformation de la Node
     Transform transform;
     Mesh *mesh;
+    HitboxRectangle * hitbox;
     Node();
     void addChild(Node *child);
     void setParent(Node *child);
@@ -30,6 +32,10 @@ public:
     void draw(GLuint Mlocation, mat4 modelMatrix);
     void deleteBuffer();
     void destroyChild(int i);
+
+    HitboxRectangle * getWorldHitbox();
+    vector<HitboxRectangle *> getAllChildrenWorldHitbox();
+    void applyPhysics();
 
     Transform getWorldTransform();
 };

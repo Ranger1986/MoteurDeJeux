@@ -26,10 +26,11 @@ using namespace glm;
 #include "src/helper.cpp"
 
 #include "src/Mesh.hpp"
-#include "src/Node.hpp"
+#include "src/Scene.hpp"
+#include "src/Obstacle.hpp"
 #include "src/Transform.hpp"
 #include "src/Quad.hpp"
-#include "src/Player.hpp"
+#include "src/Entity.hpp"
 
 #include "src/mapreader.hpp"
 
@@ -40,7 +41,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 10.0f);
 glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -58,8 +59,9 @@ mat4 modelMatrix;
 mat4 viewMatrix;
 mat4 projectionMatrix;
 
-Player *player;
-vector<HitboxRectangle*> hitboxs;
+Entity *player;
+Scene *scene;
+vector<HitboxRectangle *> hitboxs;
 
 int main(void)
 {
@@ -134,45 +136,37 @@ int main(void)
     GLuint steve_texture = loadTexture2DFromFilePath("Texture/steve.jpg");
     GLuint obstacle_texture = loadTexture2DFromFilePath("Texture/obstacle.jpg");
 
-    Node scene;
+    scene = new Scene(10, 10);
     Quad square = Quad(vec3(0, 0, 0), 1);
-
-    player = new Player();
-    player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    player->mesh = square.generateMesh(steve_texture);
-    player->transform.translate(vec3(1, 2, 0));
-    player->transform.scale(0.5);
-
-    scene.addChild(player);
-
+    Mesh *mTest = square.generateMesh(dirt_texture);
+    
     vector<vector<int>> map = readmap("map2.txt");
-    scene.transform.scale(0.1);
-    scene.transform.translate(-vec3(map.size() / 2, map[0].size() / 2, 0) * 0.1f);
+
+    HitboxRectangle * hitbox = new HitboxRectangle(vec3(-0.25,-0.25,0), vec3(0.25,0.25,0));
+
     for (int i = 0; i < map.size(); i++)
     {
         for (int j = 0; j < map[i].size(); j++)
         {
             if (map[i][j] != 0)
             {
-                Node *newNode = new Node();
-                newNode->transform.translate(vec3(i, j, 0));
-                if (map[i][j] == 1)
-                {
-                    newNode->mesh = square.generateMesh(dirt_texture);
-                }
-                else if (map[i][j] == 2)
-                {
-                    newNode->mesh = square.generateMesh(stone_texture);
-                }
-                newNode->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-                scene.addChild(newNode);
+                Obstacle *obs = new Obstacle();
+                obs->mesh = mTest;
+                obs->hitbox=new HitboxRectangle(vec3(i-0.5,j-0.5,0), vec3(i+0.5,j+0.5,0));
+                scene->grid[i][j]=obs;
             }
         }
     }
 
+    player = new Entity();
+    player->mesh = square.generateMesh(steve_texture);
+    player->transform = Transform(vec3(0, 1, 0));
+    player->transform.scale(0.5);
+    player->parent=scene;
+    player->hitbox=hitbox;
 
-    hitboxs = scene.getAllChildrenWorldHitbox();
-    scene.init();
+    scene->entities.push_back(player);
+    scene->init();
 
     do
     {
@@ -199,8 +193,8 @@ int main(void)
 
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-
-        scene.draw(Mlocation, modelMatrix);
+        scene->applyPhysics(deltaTime);
+        scene->draw(Mlocation, modelMatrix);
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -210,7 +204,7 @@ int main(void)
            glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
-    scene.deleteBuffer();
+    scene->deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
     glDeleteTextures(1, &dirt_texture);
@@ -241,29 +235,15 @@ void processInput(GLFWwindow *window)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // TODO add translations
-    vec3 deplacement = vec3(0,0,0);
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        deplacement+=vec3(0, 1, 0);
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        deplacement+=vec3(0, -1, 0);
+    vec3 deplacement = vec3(0, 0, 0);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        deplacement+=vec3(1, 0, 0);
+        player->vitesse.x=1;
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        deplacement+=vec3(-1, 0, 0);
-    deplacement = 25 * deltaTime / deplacement.length() *deplacement ;
-    player->transform.translate(deplacement);
-    int iteration = 1;
-    bool denied = false;
-    while (iteration < hitboxs.size() && !denied)
-    {
-        if(rectangleToRectangle(player->getWorldHitbox(), hitboxs[iteration])){
-            denied=true;
-            player->transform.translate(-deplacement);
-        }
-        iteration++;
-    }
-    
-    camera_target = player->getWorldTransform().getTranslation();
+        player->vitesse.x=-1;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        player->vitesse.y = 10;
+
+    camera_target = player->transform.getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);
 }
 

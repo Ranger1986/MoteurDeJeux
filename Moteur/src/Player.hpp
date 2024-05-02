@@ -14,6 +14,7 @@
 class Player : public Node
 {
 private:
+    vec3 vitesse;
 public:
     Player(/* args */);
     ~Player();

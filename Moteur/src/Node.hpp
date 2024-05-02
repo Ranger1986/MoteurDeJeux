@@ -20,6 +20,8 @@ private:
 
 public:
     // information de transformation de la Node
+    bool canJump;
+    vec3 vitesse;
     Transform transform;
     Mesh *mesh;
     HitboxRectangle * hitbox;
@@ -35,8 +37,10 @@ public:
 
     HitboxRectangle * getWorldHitbox();
     vector<HitboxRectangle *> getAllChildrenWorldHitbox();
-    void applyPhysics();
+    void applyPhysics(float deltaTime);
 
     Transform getWorldTransform();
+    HitboxRectangle * getWorldHitbox(Transform newTransform);
+    Transform getWorldTransform(Transform newTransform);
 };
 #endif

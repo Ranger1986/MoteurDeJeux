@@ -3,7 +3,6 @@
 Player::Player(/* args */): Node()
 {
 }
-
 Player::~Player()
 {
 }

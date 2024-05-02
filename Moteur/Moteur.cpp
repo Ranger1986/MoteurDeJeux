@@ -58,7 +58,7 @@ mat4 modelMatrix;
 mat4 viewMatrix;
 mat4 projectionMatrix;
 
-Player *player;
+Node *player;
 vector<HitboxRectangle*> hitboxs;
 
 int main(void)
@@ -137,7 +137,7 @@ int main(void)
     Node scene;
     Quad square = Quad(vec3(0, 0, 0), 1);
 
-    player = new Player();
+    player = new Node();
     player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
     player->mesh = square.generateMesh(steve_texture);
     player->transform.translate(vec3(1, 2, 0));
@@ -199,7 +199,7 @@ int main(void)
 
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-
+        player->applyPhysics(deltaTime);
         scene.draw(Mlocation, modelMatrix);
         // Swap buffers
         glfwSwapBuffers(window);
@@ -241,27 +241,16 @@ void processInput(GLFWwindow *window)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // TODO add translations
-    vec3 deplacement = vec3(0,0,0);
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        deplacement+=vec3(0, 1, 0);
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        deplacement+=vec3(0, -1, 0);
+    // vec3 deplacement = vec3(0,0,0);
+    int vitesseDeplacement = 2;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && player ->canJump)
+        player->vitesse.y=7.5;
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && player ->canJump)
+        player->vitesse=vec3(0,0,0);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        deplacement+=vec3(1, 0, 0);
+        player->vitesse.x=vitesseDeplacement;
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        deplacement+=vec3(-1, 0, 0);
-    deplacement = 25 * deltaTime / deplacement.length() *deplacement ;
-    player->transform.translate(deplacement);
-    int iteration = 1;
-    bool denied = false;
-    while (iteration < hitboxs.size() && !denied)
-    {
-        if(rectangleToRectangle(player->getWorldHitbox(), hitboxs[iteration])){
-            denied=true;
-            player->transform.translate(-deplacement);
-        }
-        iteration++;
-    }
+        player->vitesse.x=-vitesseDeplacement;
     
     camera_target = player->getWorldTransform().getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);

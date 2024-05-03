@@ -8,15 +8,14 @@
 #include <iostream>
 #include <vector>
 
-#include "Node.hpp"
-#include "Player.hpp"
+#include "Entity.hpp"
 
-class Player : public Node
+class Player : public Entity
 {
-private:
-    vec3 vitesse;
 public:
+    bool canJump;
     Player(/* args */);
     ~Player();
+    void applyPhysics(float deltaTime);
 };
 #endif

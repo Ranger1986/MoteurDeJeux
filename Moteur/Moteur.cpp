@@ -26,10 +26,13 @@ using namespace glm;
 #include "src/helper.cpp"
 
 #include "src/Mesh.hpp"
-#include "src/Node.hpp"
+//#include "src/Node.hpp"
 #include "src/Transform.hpp"
 #include "src/Quad.hpp"
+#include "src/Scene.hpp"
+#include "src/Entity.hpp"
 #include "src/Player.hpp"
+#include "src/Obstacle.hpp"
 
 #include "src/mapreader.hpp"
 
@@ -58,9 +61,8 @@ mat4 modelMatrix;
 mat4 viewMatrix;
 mat4 projectionMatrix;
 
-Node *player;
+Player *player;
 vector<HitboxRectangle*> hitboxs;
-
 int main(void)
 {
     // Initialise GLFW
@@ -129,50 +131,48 @@ int main(void)
     GLuint Plocation = glGetUniformLocation(programID, "P");
     GLuint Mlocation = glGetUniformLocation(programID, "M");
 
-    GLuint dirt_texture = loadTexture2DFromFilePath("Texture/dirt_text.png");
-    GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
+    //GLuint dirt_texture = loadTexture2DFromFilePath("Texture/dirt_text.png");
+    //GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
     GLuint steve_texture = loadTexture2DFromFilePath("Texture/steve.jpg");
-    GLuint obstacle_texture = loadTexture2DFromFilePath("Texture/obstacle.jpg");
-
-    Node scene;
+    //GLuint obstacle_texture = loadTexture2DFromFilePath("Texture/obstacle.jpg");
+    
+    Scene *scene;
     Quad square = Quad(vec3(0, 0, 0), 1);
 
-    player = new Node();
+    player = new Player();
+    player->parent=scene;
     player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
     player->mesh = square.generateMesh(steve_texture);
     player->transform.translate(vec3(1, 2, 0));
     player->transform.scale(0.5);
-
-    scene.addChild(player);
-
+    scene->player=player;
+    std::cout << "je me print" << std::endl;
     vector<vector<int>> map = readmap("map2.txt");
-    scene.transform.scale(0.1);
-    scene.transform.translate(-vec3(map.size() / 2, map[0].size() / 2, 0) * 0.1f);
+    /*
     for (int i = 0; i < map.size(); i++)
     {
         for (int j = 0; j < map[i].size(); j++)
         {
             if (map[i][j] != 0)
             {
-                Node *newNode = new Node();
-                newNode->transform.translate(vec3(i, j, 0));
+                ObstacleImmovable *obj = new ObstacleImmovable();
+                obj->parent =scene;
+                obj->transform.translate(vec3(i, j, 0));
                 if (map[i][j] == 1)
                 {
-                    newNode->mesh = square.generateMesh(dirt_texture);
+                    obj->mesh = square.generateMesh(dirt_texture);
                 }
                 else if (map[i][j] == 2)
                 {
-                    newNode->mesh = square.generateMesh(stone_texture);
+                    obj->mesh = square.generateMesh(stone_texture);
                 }
-                newNode->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-                scene.addChild(newNode);
+                obj->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+                scene->listeEntites.push_back(obj);
             }
         }
     }
-
-
-    hitboxs = scene.getAllChildrenWorldHitbox();
-    scene.init();
+                */
+    //scene->init();
 
     do
     {
@@ -199,8 +199,8 @@ int main(void)
 
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-        player->applyPhysics(deltaTime);
-        scene.draw(Mlocation, modelMatrix);
+        //player->applyPhysics(deltaTime);
+        //scene->draw(Mlocation, modelMatrix);
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -210,11 +210,12 @@ int main(void)
            glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
-    scene.deleteBuffer();
+    //scene->deleteBuffer();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
-    glDeleteTextures(1, &dirt_texture);
-    glDeleteTextures(1, &stone_texture);
+    glDeleteTextures(1, &steve_texture);
+    // glDeleteTextures(1, &dirt_texture);
+    // glDeleteTextures(1, &stone_texture);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
@@ -242,6 +243,7 @@ void processInput(GLFWwindow *window)
 
     // TODO add translations
     // vec3 deplacement = vec3(0,0,0);
+    /*
     int vitesseDeplacement = 2;
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && player ->canJump)
         player->vitesse.y=7.5;
@@ -252,8 +254,9 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         player->vitesse.x=-vitesseDeplacement;
     
-    camera_target = player->getWorldTransform().getTranslation();
+    camera_target = player->transform.getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);
+    */
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

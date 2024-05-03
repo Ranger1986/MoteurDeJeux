@@ -68,6 +68,12 @@ add_executable(Moteur
 		Moteur/src/Mesh.hpp
 		Moteur/src/Node.cpp
 		Moteur/src/Node.hpp
+		Moteur/src/Entity.cpp
+		Moteur/src/Entity.hpp
+		Moteur/src/Obstacle.cpp
+		Moteur/src/Obstacle.hpp
+		Moteur/src/Scene.cpp
+		Moteur/src/Scene.hpp
 		Moteur/src/Transform.cpp
 		Moteur/src/Transform.hpp
 		Moteur/src/Quad.cpp

@@ -63,6 +63,8 @@ add_executable(Moteur
 		
 		Moteur/src/Bullet.cpp
 		Moteur/src/Bullet.hpp
+		Moteur/src/Behaviour.cpp
+		Moteur/src/Behaviour.hpp
 		Moteur/src/helper.cpp
 		Moteur/src/Hitbox.cpp
 		Moteur/src/Hitbox.hpp

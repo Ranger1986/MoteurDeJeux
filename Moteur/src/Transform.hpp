@@ -19,6 +19,7 @@ public:
     void roty(float angle);
     void rotz(float angle);
     void scale(float ratio);
+    void scale(vec3 ratio);
     void translate(vec3 translation);
     vec3 getTranslation();
     vec3 applyToPoint(vec3 p);

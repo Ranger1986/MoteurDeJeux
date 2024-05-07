@@ -63,6 +63,13 @@ void Transform::translate(vec3 translation){
 void Transform::scale(float ratio){
     this->m=m*(mat3(1.0)*ratio);
 }
+void Transform::scale(vec3 ratio){
+    mat3 scalingMatrice = mat3(1.0);
+    scalingMatrice[0][0]=ratio.x;
+    scalingMatrice[1][1]=ratio.y;
+    scalingMatrice[2][2]=ratio.z;
+    this->m=m*scalingMatrice;
+}
 vec3 Transform::applyToPoint(vec3 p){
     return m*p+t;
 }

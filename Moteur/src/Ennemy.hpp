@@ -3,7 +3,11 @@
 
 #include "Node.hpp"
 
+#include "Behaviour.hpp"
+
 class Bullet;
+
+class Behaviour;
 
 class Ennemy : public Node
 {
@@ -15,6 +19,8 @@ public:
     int HP;
 
     Bullet * bullet;
+
+    Behaviour * behaviour;
 
     Ennemy(/* args */);
     ~Ennemy();

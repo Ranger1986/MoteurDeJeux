@@ -6,13 +6,8 @@ Ennemy::Ennemy(){}
 Ennemy::~Ennemy(){}
 void Ennemy::applyPhysics(float deltaTime)
 {
-    if (nextFire>0)
-    {
-        nextFire-=deltaTime;
-    }
-    else{
-        tir();
-    }
+    behaviour->update();
+    nextFire-=deltaTime;
     acceleration=parent->gravity;
     vitesse = (vitesse + acceleration * deltaTime) * 0.99f;
     vec3 deplacement = vitesse * deltaTime;

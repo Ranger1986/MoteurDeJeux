@@ -159,6 +159,11 @@ int main(void)
     ennemy->direction=-1;
     ennemy->HP=3;
 
+    RondeBehaviour * ronde = new RondeBehaviour();
+    ronde->vision = new HitboxRectangle(vec3(-4, -0.5, 0), vec3(0, 0.5, 0));
+    ennemy->behaviour=ronde;
+    ennemy->behaviour->ennemy=ennemy;
+
     Bullet * newB = new Bullet();
     newB->TTL = 2;
     newB->parent=scene;
@@ -284,6 +289,10 @@ void processInput(GLFWwindow *window)
     }
     else
         player->vitesse.x=0; //a trouver un meilleur moyen de gerer la fin de deplacement du joueur
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        player->parent->ennemies[0]->behaviour->update();
+    }
     
     camera_target = player->transform.getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);

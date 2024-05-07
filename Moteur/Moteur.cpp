@@ -144,7 +144,17 @@ int main(void)
     player->mesh = square.generateMesh(steve_texture);
     player->transform.translate(vec3(0, 2, 0));
     player->transform.scale(0.5);
+    player->fireDelay=1;
 
+    Bullet * newB = new Bullet();
+    newB->TTL = 2;
+    newB->parent=scene;
+    newB->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    newB->mesh = square.generateMesh(steve_texture);
+    //newB->transform.translate(vec3(0, 2, 0));
+    newB->transform.scale(0.25);
+    player->bullet= newB;
+    //scene->bullets.push_back(newB);
     scene->players.push_back(player);
 
     vector<vector<int>> map = readmap("map2.txt");
@@ -158,10 +168,12 @@ int main(void)
                 newObstacle->transform.translate(vec3(i, j, 0));
                 if (map[i][j] == 1)
                 {
+                    newObstacle->HP=1;
                     newObstacle->mesh = square.generateMesh(dirt_texture);
                 }
                 else if (map[i][j] == 2)
                 {
+                    newObstacle->HP=3;
                     newObstacle->mesh = square.generateMesh(stone_texture);
                 }
                 newObstacle->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
@@ -239,6 +251,8 @@ void processInput(GLFWwindow *window)
 
     // TODO add translations
     // vec3 deplacement = vec3(0,0,0);
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        {player->tir();}
     int vitesseDeplacement = 2;
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         player->jump();

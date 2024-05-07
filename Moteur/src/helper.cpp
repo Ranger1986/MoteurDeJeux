@@ -17,6 +17,7 @@
 
 #include "Transform.hpp"
 #include "Player.hpp"
+#include "Bullet.hpp"
 
 using namespace glm;
 using namespace std;

@@ -6,7 +6,8 @@
 class Obstacle : public Node
 {
 public:
-
+    int HP;
+    
     Obstacle(/* args */);
     ~Obstacle();
 

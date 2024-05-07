@@ -59,6 +59,8 @@ add_definitions(
 # Moteur
 add_executable(Moteur
         Moteur/Moteur.cpp
+		Moteur/src/Bullet.cpp
+		Moteur/src/Bullet.hpp
 		Moteur/src/helper.cpp
 		Moteur/src/Hitbox.cpp
 		Moteur/src/Hitbox.hpp

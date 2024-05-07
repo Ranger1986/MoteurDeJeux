@@ -9,11 +9,15 @@
 #include <vector>
 
 #include "Node.hpp"
+#include "Bullet.hpp"
 
 class Player : public Node
 {
 public:
     bool canJump;
+    float fireDelay;
+    float nextFire;
+    Bullet * bullet;
     Player(/* args */);
     ~Player();
     void applyPhysics(float deltaTime);

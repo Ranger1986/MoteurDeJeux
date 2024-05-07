@@ -1,15 +1,20 @@
 #include "Player.hpp"
 #include "Scene.hpp"
-
+#include "Quad.hpp"
+#include "helper.cpp"
 Player::Player(/* args */) : Node()
 {
-    canJump=true;
+    nextFire=0;
 }
 Player::~Player()
 {
 }
 void Player::applyPhysics(float deltaTime)
 {
+    if (nextFire>0)
+    {
+        nextFire-=deltaTime;
+    }
     acceleration=parent->gravity;
     vitesse = (vitesse + acceleration * deltaTime) * 0.99f;
     vec3 deplacement = vitesse * deltaTime;
@@ -65,6 +70,7 @@ void Player::applyPhysics(float deltaTime)
     vitesse.x = 0;
     vitesse.y = 0;
     canJump = true;
+    
 }
 void Player::jump()
 {
@@ -73,4 +79,15 @@ void Player::jump()
         vitesse.y = 7.5;
         canJump = false;
     }
+}
+void Player::tir(){
+    if (nextFire<=0)
+    {
+        Bullet * newBullet = new Bullet(*bullet);
+        newBullet->transform.t=transform.t;
+        newBullet->mesh->init();
+        parent->bullets.push_back(newBullet);
+        nextFire=fireDelay;
+    }
+    
 }

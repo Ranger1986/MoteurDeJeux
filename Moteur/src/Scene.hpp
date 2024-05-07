@@ -6,6 +6,7 @@
 #include "Hitbox.hpp"
 #include "Player.hpp"
 #include "Ennemy.hpp"
+#include "Bullet.hpp"
 
 class Scene
 {
@@ -13,6 +14,7 @@ public:
     vector<Obstacle *> obstacles;
     vector<Player *> players;
     vector<Ennemy *> ennemies;
+    vector<Bullet *> bullets;
     vec3 gravity;
     GLuint Mlocation;
 

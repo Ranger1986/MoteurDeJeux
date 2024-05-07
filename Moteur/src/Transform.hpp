@@ -5,12 +5,11 @@
 using namespace glm;
 class Transform
 {
-private:
+public:
     // rotation + skew + scale
     mat3 m;
     // translation
     vec3 t;
-public:
     Transform();
     Transform(mat3 matrice);
     Transform(vec3 translation);

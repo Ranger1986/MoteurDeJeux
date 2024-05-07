@@ -39,6 +39,11 @@ void Scene::applyPhysics(float deltaTime){
     for (int i = 0; i < obstacles.size(); i++)
     {
         obstacles[i]->applyPhysics(deltaTime);
+        if (obstacles[i]->HP <= 0 )
+        {
+            obstacles.erase(obstacles.begin()+i);
+        }
+        
     }
     for (int i = 0; i < ennemies.size(); i++)
     {
@@ -47,6 +52,14 @@ void Scene::applyPhysics(float deltaTime){
     for (int i = 0; i < players.size(); i++)
     {
         players[i]->applyPhysics(deltaTime);
+    }
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        bullets[i]->applyPhysics(deltaTime);
+        if (bullets[i]->TTL <=0)
+        {
+            bullets.erase(bullets.begin()+i);
+        }
     }
 }
 void Scene::init(){
@@ -82,6 +95,12 @@ void Scene::draw(){
         glUniformMatrix4fv(Mlocation, 1, GL_FALSE, &modelMatrix[0][0]);
         players[i]->mesh->draw();
     }
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        mat4 modelMatrix = bullets[i]->transform.matMod();
+        glUniformMatrix4fv(Mlocation, 1, GL_FALSE, &modelMatrix[0][0]);
+        bullets[i]->mesh->draw();
+    }
 }
 void Scene::deleteBuffers(){
     for (int i = 0; i < obstacles.size(); i++)
@@ -95,5 +114,9 @@ void Scene::deleteBuffers(){
     for (int i = 0; i < players.size(); i++)
     {
         players[i]->mesh->deleteBuffer();
+    }
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        bullets[i]->mesh->deleteBuffer();
     }
 }

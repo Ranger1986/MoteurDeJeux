@@ -41,6 +41,7 @@ void Scene::applyPhysics(float deltaTime){
         obstacles[i]->applyPhysics(deltaTime);
         if (obstacles[i]->HP <= 0 )
         {
+            delete obstacles[i];
             obstacles.erase(obstacles.begin()+i);
         }
         
@@ -58,6 +59,7 @@ void Scene::applyPhysics(float deltaTime){
         bullets[i]->applyPhysics(deltaTime);
         if (bullets[i]->TTL <=0)
         {
+            delete bullets[i];
             bullets.erase(bullets.begin()+i);
         }
     }

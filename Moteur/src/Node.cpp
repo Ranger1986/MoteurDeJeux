@@ -1,4 +1,15 @@
 #include "Node.hpp"
+
+Node::Node(){
+    
+}
+HitboxRectangle * Node::getTransformedHitbox(){
+    return new HitboxRectangle(hitbox, transform);
+}
+HitboxRectangle * Node::getTransformedHitbox(HitboxRectangle *hitbox, Transform transform){
+    return new HitboxRectangle(hitbox, transform);
+}
+/*
 #include <iostream>
 
 Node::Node()
@@ -144,3 +155,4 @@ void Node::applyPhysics(float deltaTime){
     }
     
 };
+    */

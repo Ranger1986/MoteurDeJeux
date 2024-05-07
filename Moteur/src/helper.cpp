@@ -16,6 +16,7 @@
 #include <iostream>
 
 #include "Transform.hpp"
+#include "Player.hpp"
 
 using namespace glm;
 using namespace std;
@@ -37,6 +38,12 @@ public:
         print(transform.matMod());
     }
 
+    static void print(Player * player){
+        std::cout << "Print de joueur :" << std::endl;
+        std::cout << "Acceleration : (" << player->acceleration.x << "," << player->acceleration.y << ","<< player->acceleration.z <<")" <<std::endl;
+        std::cout << "Vitesse : (" << player->vitesse.x << "," << player->vitesse.y << ","<< player->vitesse.z <<")" <<std::endl;
+        std::cout << "canJump : " << player->canJump << std::endl;
+    }
     static void print(vec3 vec){
         std::cout << "(";
         for (int i = 0; i < 3; i++){

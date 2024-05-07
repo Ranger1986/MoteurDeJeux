@@ -26,10 +26,12 @@ using namespace glm;
 #include "src/helper.cpp"
 
 #include "src/Mesh.hpp"
-#include "src/Node.hpp"
 #include "src/Transform.hpp"
 #include "src/Quad.hpp"
-#include "src/Player.hpp"
+#include "src/Scene.hpp"
+#include "src/Node.hpp"
+#include "src/Obstacle.hpp"
+#include "src/Ennemy.hpp"
 
 #include "src/mapreader.hpp"
 
@@ -40,7 +42,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 camera_position = glm::vec3(0.0f, 0.0f, 20.0f);
 glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -58,8 +60,7 @@ mat4 modelMatrix;
 mat4 viewMatrix;
 mat4 projectionMatrix;
 
-Node *player;
-vector<HitboxRectangle*> hitboxs;
+Player *player;
 
 int main(void)
 {
@@ -134,45 +135,41 @@ int main(void)
     GLuint steve_texture = loadTexture2DFromFilePath("Texture/steve.jpg");
     GLuint obstacle_texture = loadTexture2DFromFilePath("Texture/obstacle.jpg");
 
-    Node scene;
+    Scene * scene= new Scene(Mlocation);
     Quad square = Quad(vec3(0, 0, 0), 1);
 
-    player = new Node();
+    player = new Player();
+    player->parent=scene;
     player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
     player->mesh = square.generateMesh(steve_texture);
-    player->transform.translate(vec3(1, 2, 0));
+    player->transform.translate(vec3(0, 2, 0));
     player->transform.scale(0.5);
 
-    scene.addChild(player);
+    scene->players.push_back(player);
 
     vector<vector<int>> map = readmap("map2.txt");
-    scene.transform.scale(0.1);
-    scene.transform.translate(-vec3(map.size() / 2, map[0].size() / 2, 0) * 0.1f);
     for (int i = 0; i < map.size(); i++)
     {
         for (int j = 0; j < map[i].size(); j++)
         {
             if (map[i][j] != 0)
             {
-                Node *newNode = new Node();
-                newNode->transform.translate(vec3(i, j, 0));
+                Obstacle *newObstacle = new Obstacle();
+                newObstacle->transform.translate(vec3(i, j, 0));
                 if (map[i][j] == 1)
                 {
-                    newNode->mesh = square.generateMesh(dirt_texture);
+                    newObstacle->mesh = square.generateMesh(dirt_texture);
                 }
                 else if (map[i][j] == 2)
                 {
-                    newNode->mesh = square.generateMesh(stone_texture);
+                    newObstacle->mesh = square.generateMesh(stone_texture);
                 }
-                newNode->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-                scene.addChild(newNode);
+                newObstacle->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+                scene->obstacles.push_back(newObstacle);
             }
         }
     }
-
-
-    hitboxs = scene.getAllChildrenWorldHitbox();
-    scene.init();
+    scene->init();
 
     do
     {
@@ -199,8 +196,8 @@ int main(void)
 
         glUniformMatrix4fv(Vlocation, 1, GL_FALSE, &viewMatrix[0][0]);
         glUniformMatrix4fv(Plocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-        player->applyPhysics(deltaTime);
-        scene.draw(Mlocation, modelMatrix);
+        scene->applyPhysics(deltaTime);
+        scene->draw();
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -210,7 +207,7 @@ int main(void)
            glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
-    scene.deleteBuffer();
+    scene->deleteBuffers();
     glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
     glDeleteTextures(1, &dirt_texture);
@@ -243,16 +240,18 @@ void processInput(GLFWwindow *window)
     // TODO add translations
     // vec3 deplacement = vec3(0,0,0);
     int vitesseDeplacement = 2;
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && player ->canJump)
-        player->vitesse.y=7.5;
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && player ->canJump)
-        player->vitesse=vec3(0,0,0);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        player->jump();
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+        helper::print(player);
+        //player->vitesse=vec3(0,0,0);
+    }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         player->vitesse.x=vitesseDeplacement;
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         player->vitesse.x=-vitesseDeplacement;
     
-    camera_target = player->getWorldTransform().getTranslation();
+    camera_target = player->transform.getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);
 }
 

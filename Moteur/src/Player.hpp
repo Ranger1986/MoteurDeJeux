@@ -9,14 +9,15 @@
 #include <vector>
 
 #include "Node.hpp"
-#include "Player.hpp"
 
 class Player : public Node
 {
-private:
-    vec3 vitesse;
 public:
+    bool canJump;
     Player(/* args */);
     ~Player();
+    void applyPhysics(float deltaTime);
+    void jump();
+    void tir();
 };
 #endif

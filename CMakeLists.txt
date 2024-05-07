@@ -64,6 +64,12 @@ add_executable(Moteur
 		Moteur/src/Hitbox.hpp
 		Moteur/src/Player.cpp
 		Moteur/src/Player.hpp
+		Moteur/src/Scene.cpp
+		Moteur/src/Scene.hpp
+		Moteur/src/Obstacle.cpp
+		Moteur/src/Obstacle.hpp
+		Moteur/src/Ennemy.cpp
+		Moteur/src/Ennemy.hpp
 		Moteur/src/Mesh.cpp
 		Moteur/src/Mesh.hpp
 		Moteur/src/Node.cpp

@@ -49,10 +49,20 @@ void Scene::applyPhysics(float deltaTime){
     for (int i = 0; i < ennemies.size(); i++)
     {
         ennemies[i]->applyPhysics(deltaTime);
+        if (ennemies[i]->HP <= 0 )
+        {
+            delete ennemies[i];
+            ennemies.erase(ennemies.begin()+i);
+        }
     }
     for (int i = 0; i < players.size(); i++)
     {
         players[i]->applyPhysics(deltaTime);
+        if (players[i]->HP <= 0 )
+        {
+            //delete players[i];
+            players.erase(players.begin()+i);
+        }
     }
     for (int i = 0; i < bullets.size(); i++)
     {

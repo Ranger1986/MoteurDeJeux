@@ -84,10 +84,11 @@ void Player::tir(){
     if (nextFire<=0)
     {
         Bullet * newBullet = new Bullet(*bullet);
+        newBullet->direction=direction;
         newBullet->transform.t=transform.t;
         newBullet->mesh->init();
+        newBullet->playerBullet=true;
         parent->bullets.push_back(newBullet);
         nextFire=fireDelay;
     }
-    
 }

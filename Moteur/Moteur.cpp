@@ -133,7 +133,8 @@ int main(void)
     GLuint dirt_texture = loadTexture2DFromFilePath("Texture/dirt_text.png");
     GLuint stone_texture = loadTexture2DFromFilePath("Texture/stone_text.png");
     GLuint steve_texture = loadTexture2DFromFilePath("Texture/steve.jpg");
-    GLuint obstacle_texture = loadTexture2DFromFilePath("Texture/obstacle.jpg");
+    GLuint red_texture = loadTexture2DFromFilePath("Texture/red.png");
+    GLuint yellow_texture = loadTexture2DFromFilePath("Texture/yellow.png");
 
     Scene * scene= new Scene(Mlocation);
     Quad square = Quad(vec3(0, 0, 0), 1);
@@ -145,17 +146,30 @@ int main(void)
     player->transform.translate(vec3(0, 2, 0));
     player->transform.scale(0.5);
     player->fireDelay=1;
+    player->direction=1;
+    player->HP=3;
+    
+    Ennemy * ennemy = new Ennemy();
+    ennemy->parent=scene;
+    ennemy->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    ennemy->mesh = square.generateMesh(red_texture);
+    ennemy->transform.translate(vec3(5, 5, 0));
+    ennemy->transform.scale(0.75);
+    ennemy->fireDelay=2;
+    ennemy->direction=-1;
+    ennemy->HP=3;
 
     Bullet * newB = new Bullet();
     newB->TTL = 2;
     newB->parent=scene;
     newB->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    newB->mesh = square.generateMesh(steve_texture);
-    //newB->transform.translate(vec3(0, 2, 0));
+    newB->mesh = square.generateMesh(yellow_texture);
     newB->transform.scale(0.25);
     player->bullet= newB;
-    //scene->bullets.push_back(newB);
+    ennemy->bullet= newB;
+
     scene->players.push_back(player);
+    scene->ennemies.push_back(ennemy);
 
     vector<vector<int>> map = readmap("map2.txt");
     for (int i = 0; i < map.size(); i++)
@@ -257,13 +271,19 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         player->jump();
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-        helper::print(player);
-        //player->vitesse=vec3(0,0,0);
+        player->vitesse.y-=10*deltaTime;
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
         player->vitesse.x=vitesseDeplacement;
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        player->direction = +1;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
         player->vitesse.x=-vitesseDeplacement;
+        player->direction = -1;
+    }
+    else
+        player->vitesse.x=0; //a trouver un meilleur moyen de gerer la fin de deplacement du joueur
     
     camera_target = player->transform.getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);

@@ -58,7 +58,9 @@ add_definitions(
 
 # Moteur
 add_executable(Moteur
+
         Moteur/Moteur.cpp
+		
 		Moteur/src/Bullet.cpp
 		Moteur/src/Bullet.hpp
 		Moteur/src/helper.cpp
@@ -81,6 +83,7 @@ add_executable(Moteur
 		Moteur/src/Quad.cpp
 		Moteur/src/Quad.hpp
 		Moteur/src/mapreader.hpp
+
 	common/shader.cpp
 	common/shader.hpp
 	common/controls.cpp
@@ -91,7 +94,7 @@ add_executable(Moteur
 	common/objloader.hpp
 	common/vboindexer.cpp
 	common/vboindexer.hpp
-	
+
         Moteur/vertex_shader.glsl
         Moteur/fragment_shader.glsl
 )

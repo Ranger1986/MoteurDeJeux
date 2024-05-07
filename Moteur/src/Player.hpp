@@ -17,6 +17,8 @@ public:
     bool canJump;
     float fireDelay;
     float nextFire;
+    int direction;
+    int HP;
     Bullet * bullet;
     Player(/* args */);
     ~Player();

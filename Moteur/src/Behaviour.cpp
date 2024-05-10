@@ -72,9 +72,11 @@ void RondeBehaviour::update(){
         Transform inverse = Transform();
         inverse.scale(vec3(-1,0,0));
         vision = Node::getTransformedHitbox(vision, inverse);
+        /*
         std::cout << "Min Max" << std::endl;
         std::cout << vision->min.x << "," << vision->min.y << std::endl;
         std::cout << vision->max.x << "," << vision->max.y << std::endl;
+        */
     }
     ennemy->vitesse.x=ennemy->direction;
     

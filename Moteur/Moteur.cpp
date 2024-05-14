@@ -141,20 +141,6 @@ int main(void)
     Scene * scene= new Scene(Mlocation);
     Quad square = Quad(vec3(0, 0, 0), 1);
     init();
-    player = getPlayerByID(0);
-    player->transform.translate(vec3(0, 2, 0));
-    player->parent=scene;
-    player->bullet->parent=scene;
-
-    // player = Load();
-    // player->parent=scene;
-    // player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    // player->mesh = square.generateMesh(steve_texture);
-    // player->transform.translate(vec3(0, 2, 0));
-    // player->transform.scale(0.5);
-    // player->fireDelay=1;
-    // player->direction=1;
-    // player->HP=3;
     
     Ennemy * ennemy = new Ennemy();
     ennemy->parent=scene;
@@ -179,7 +165,6 @@ int main(void)
     newB->transform.scale(0.25);
     ennemy->bullet= newB;
 
-    scene->players.push_back(player);
     scene->ennemies.push_back(ennemy);
 
     vector<vector<string>> map = readmap("map2.txt");
@@ -187,17 +172,11 @@ int main(void)
     {
         for (int j = 0; j < map[i].size(); j++)
         {
-            std::cout << i << j << std::endl;
-            std::cout << map[i][j] << std::endl;
             if (map[i][j][0]!='_')
             {
                 if (map[i][j][0]=='O')
                 {
-                    std::cout << i << j << std::endl;
-                    std::cout << map[i][j] << std::endl;
                     map[i][j].erase(0,1);
-                    std::cout << i << j << std::endl;
-                    std::cout << map[i][j] << std::endl;
                     Obstacle * newObstacle = new Obstacle(* getObstacleByID(stoi(map[i][j])));
                     newObstacle->transform.translate(vec3(i, j, 0));
                     newObstacle->parent=scene;
@@ -205,7 +184,11 @@ int main(void)
                 }
                 else if (map[i][j][0]=='P')
                 {
-                    continue;
+                    Player * newPlayer = new Player(* getPlayerByID(0));
+                    newPlayer->transform.translate(vec3(i, j, 0));
+                    newPlayer->parent=scene;
+                    newPlayer->bullet->parent=scene;
+                    scene->players.push_back(newPlayer);
                 }
                 else if (map[i][j][0]=='E')
                 {
@@ -215,6 +198,7 @@ int main(void)
             }
         }
     }
+    player = scene->players[0];
     scene->init();
 
     do

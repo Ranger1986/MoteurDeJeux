@@ -6,9 +6,9 @@
 
 using namespace std;
 
-vector<vector<int>> readmap(const std::string &path)
+vector<vector<string>> readmap(const std::string &path)
 {
-    vector<vector<int>> result = vector<vector<int>>();
+    vector<vector<string>> result = vector<vector<string>>();
 
     ifstream inputFile(path);
 
@@ -19,28 +19,26 @@ vector<vector<int>> readmap(const std::string &path)
     }
 
     string line;
-    int word;
+    string word;
     int height, width;
-    vector<vector<int>> temp = vector<vector<int>>();
+    vector<vector<string>> temp = vector<vector<string>>();
     inputFile >> height;
     inputFile >> width;
-    std::cout << height << std::endl;
-    std::cout << width << std::endl;
     for (int i = 0; i < width; i++)
     {
-        vector<int> ligne = vector<int>();
+        vector<string> ligne = vector<string>();
         for (int j = 0; j < height; j++)
         {
             inputFile >> word;
             ligne.push_back(word);
-            word=0;
+            word="";
         }
         temp.push_back(ligne);
     }
 
     for (int i = 0; i < temp[0].size(); i++)
     {
-        result.push_back(vector<int>());
+        result.push_back(vector<string>());
     }
 
     for (int i = 0; i < temp.size(); i++)

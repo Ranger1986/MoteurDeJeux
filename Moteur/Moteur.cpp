@@ -15,6 +15,7 @@ GLFWwindow *window;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <algorithm>
 
 using namespace glm;
 
@@ -34,6 +35,7 @@ using namespace glm;
 #include "src/Ennemy.hpp"
 
 #include "src/mapreader.hpp"
+#include "src/RessourceLoader.hpp"
 
 void processInput(GLFWwindow *window);
 
@@ -138,16 +140,21 @@ int main(void)
 
     Scene * scene= new Scene(Mlocation);
     Quad square = Quad(vec3(0, 0, 0), 1);
-
-    player = new Player();
-    player->parent=scene;
-    player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    player->mesh = square.generateMesh(steve_texture);
+    init();
+    player = getPlayerByID(0);
     player->transform.translate(vec3(0, 2, 0));
-    player->transform.scale(0.5);
-    player->fireDelay=1;
-    player->direction=1;
-    player->HP=3;
+    player->parent=scene;
+    player->bullet->parent=scene;
+
+    // player = Load();
+    // player->parent=scene;
+    // player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    // player->mesh = square.generateMesh(steve_texture);
+    // player->transform.translate(vec3(0, 2, 0));
+    // player->transform.scale(0.5);
+    // player->fireDelay=1;
+    // player->direction=1;
+    // player->HP=3;
     
     Ennemy * ennemy = new Ennemy();
     ennemy->parent=scene;
@@ -170,33 +177,41 @@ int main(void)
     newB->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
     newB->mesh = square.generateMesh(yellow_texture);
     newB->transform.scale(0.25);
-    player->bullet= newB;
     ennemy->bullet= newB;
 
     scene->players.push_back(player);
     scene->ennemies.push_back(ennemy);
 
-    vector<vector<int>> map = readmap("map2.txt");
+    vector<vector<string>> map = readmap("map2.txt");
     for (int i = 0; i < map.size(); i++)
     {
         for (int j = 0; j < map[i].size(); j++)
         {
-            if (map[i][j] != 0)
+            std::cout << i << j << std::endl;
+            std::cout << map[i][j] << std::endl;
+            if (map[i][j][0]!='_')
             {
-                Obstacle *newObstacle = new Obstacle();
-                newObstacle->transform.translate(vec3(i, j, 0));
-                if (map[i][j] == 1)
+                if (map[i][j][0]=='O')
                 {
-                    newObstacle->HP=1;
-                    newObstacle->mesh = square.generateMesh(dirt_texture);
+                    std::cout << i << j << std::endl;
+                    std::cout << map[i][j] << std::endl;
+                    map[i][j].erase(0,1);
+                    std::cout << i << j << std::endl;
+                    std::cout << map[i][j] << std::endl;
+                    Obstacle * newObstacle = new Obstacle(* getObstacleByID(stoi(map[i][j])));
+                    newObstacle->transform.translate(vec3(i, j, 0));
+                    newObstacle->parent=scene;
+                    scene->obstacles.push_back(newObstacle);
                 }
-                else if (map[i][j] == 2)
+                else if (map[i][j][0]=='P')
                 {
-                    newObstacle->HP=3;
-                    newObstacle->mesh = square.generateMesh(stone_texture);
+                    continue;
                 }
-                newObstacle->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-                scene->obstacles.push_back(newObstacle);
+                else if (map[i][j][0]=='E')
+                {
+                    continue;
+                }
+                 
             }
         }
     }

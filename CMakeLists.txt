@@ -85,6 +85,7 @@ add_executable(Moteur
 		Moteur/src/Quad.cpp
 		Moteur/src/Quad.hpp
 		Moteur/src/mapreader.hpp
+		Moteur/src/RessourceLoader.hpp
 
 	common/shader.cpp
 	common/shader.hpp

@@ -23,6 +23,8 @@ void Player::applyPhysics(float deltaTime)
     futureX.translate(vec3(deplacement.x, 0, 0));
     Transform futureY = transform;
     futureY.translate(vec3(0, deplacement.y, 0));
+    Transform ground = transform;
+    ground.translate(vec3(0, -0.5, 0));
     Transform futureXY = transform;
     futureXY.translate(vec3(deplacement.x, deplacement.y, 0));
     int iteration = 0;
@@ -30,7 +32,7 @@ void Player::applyPhysics(float deltaTime)
     bool deniedY = false;
     bool deniedXY = false;
     vector<HitboxRectangle *> hitboxs = parent->getObstaclesHitboxs();
-    while (iteration < hitboxs.size() && !(deniedX && deniedY && deniedXY))
+    while (iteration < hitboxs.size() && !(deniedX && deniedY && deniedXY && canJump))
     {
         if (rectangleToRectangle(Node::getTransformedHitbox(hitbox, futureX), hitboxs[iteration]))
         {
@@ -44,6 +46,11 @@ void Player::applyPhysics(float deltaTime)
         {
             deniedXY = true;
         }
+        if (rectangleToRectangle(Node::getTransformedHitbox(hitbox, ground), hitboxs[iteration]))
+        {
+            canJump=true;
+        }
+        
         iteration++;
     }
     if (!deniedXY)
@@ -56,8 +63,6 @@ void Player::applyPhysics(float deltaTime)
     {
         transform = futureX;
         vitesse.y = 0;
-        canJump = true;
-
         return;
     }
     if (deniedX && !deniedY)

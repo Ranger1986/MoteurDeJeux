@@ -3,14 +3,11 @@
 
 #include "Ennemy.hpp"
 
-enum BehaviourType { Tourelle, Ronde};
-
 class Ennemy;
 
 class Behaviour
 {
 public:
-    BehaviourType type;
     Ennemy * ennemy;
 
     Behaviour(/* args */);

@@ -35,6 +35,14 @@ void Bullet::applyPhysics(float deltaTime){
     }
     else
     {
+        hitboxs = parent->getObstaclesHitboxs();
+        for (int i = 0; i < hitboxs.size(); i++)
+        {
+            if (rectangleToRectangle(Node::getTransformedHitbox(hitbox, transform), hitboxs[i])){
+                TTL=-1;
+                return;
+            }
+        }
         hitboxs = parent->getPlayersHitboxs();
         for (int i = 0; i < hitboxs.size(); i++)
         {

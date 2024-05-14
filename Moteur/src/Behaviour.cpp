@@ -10,7 +10,6 @@ Behaviour::~Behaviour()
 
 TourelleBehaviour::TourelleBehaviour(/* args */)
 {
-    type = BehaviourType::Tourelle;
 }
 
 TourelleBehaviour::~TourelleBehaviour()
@@ -28,7 +27,6 @@ Behaviour * TourelleBehaviour::copy(){
 }
 RondeBehaviour::RondeBehaviour(/* args */)
 {
-    type = BehaviourType::Ronde;
 }
 
 RondeBehaviour::~RondeBehaviour()
@@ -38,23 +36,49 @@ RondeBehaviour::~RondeBehaviour()
 void RondeBehaviour::update(float deltaTime){    
     bool playerFound=false;
     vector<HitboxRectangle *> hitboxs = ennemy->parent->getPlayersHitboxs();
-    int iteration=0;
     bool detected=false;
-    for (int i = 0; i < hitboxs.size(); i++)
+    int playerPos;
+    int iteration = 0;
+    while (!detected && iteration < hitboxs.size())
     {
         if (rectangleToRectangle(Node::getTransformedHitbox(vision, ennemy->transform), hitboxs[iteration]))
         {
             detected = true;
+            playerPos = (hitboxs[iteration]->min.x+hitboxs[iteration]->max.x)/2;
         }
+        iteration++;
     }
+    
     if (detected)
     {
-        if (ennemy->nextFire<0)
+        int ennemyPos=(Node::getTransformedHitbox(ennemy->hitbox, ennemy->transform)->min.x+Node::getTransformedHitbox(ennemy->hitbox, ennemy->transform)->max.x)/2;
+        hitboxs = ennemy->parent->getObstaclesHitboxs();
+        iteration =0;
+        while(detected && iteration < hitboxs.size())
         {
-            ennemy->tir();
+            if (rectangleToRectangle(Node::getTransformedHitbox(vision, ennemy->transform), hitboxs[iteration]))
+            {
+                int obstaclePos= (hitboxs[iteration]->min.x+hitboxs[iteration]->max.x)/2;
+                if ((playerPos<obstaclePos&&obstaclePos<ennemyPos)||
+                    (ennemyPos<obstaclePos&&obstaclePos<playerPos))
+                {
+                    detected = false;
+                }
+                std::cout << "obstacle et ennemy" << std::endl;
+                std::cout << playerPos << std::endl;
+                std::cout << obstaclePos << std::endl;
+                std::cout << ennemyPos << std::endl;
+            }
+            iteration++;
         }
-        ennemy->vitesse.x=0;
-        return;
+        if (detected){
+            if (ennemy->nextFire<0)
+            {
+                ennemy->tir();
+            }
+            ennemy->vitesse.x=0;
+            return;
+        }
     }
 
     Transform futureXY = ennemy->transform;

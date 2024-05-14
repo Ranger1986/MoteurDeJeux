@@ -27,5 +27,6 @@ public:
 
     void applyPhysics(float deltaTime);
     void tir();
+    // Ennemy * copy();
 };
 #endif

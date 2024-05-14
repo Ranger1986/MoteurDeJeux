@@ -73,3 +73,6 @@ void Ennemy::tir(){
         nextFire=fireDelay;
     }
 }
+// Ennemy * Ennemy::copy(){
+
+// }

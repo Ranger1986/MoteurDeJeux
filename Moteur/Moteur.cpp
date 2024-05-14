@@ -141,31 +141,6 @@ int main(void)
     Scene * scene= new Scene(Mlocation);
     Quad square = Quad(vec3(0, 0, 0), 1);
     init();
-    
-    Ennemy * ennemy = new Ennemy();
-    ennemy->parent=scene;
-    ennemy->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    ennemy->mesh = square.generateMesh(red_texture);
-    ennemy->transform.translate(vec3(5, 5, 0));
-    ennemy->transform.scale(0.75);
-    ennemy->fireDelay=2;
-    ennemy->direction=-1;
-    ennemy->HP=3;
-
-    RondeBehaviour * ronde = new RondeBehaviour();
-    ronde->vision = new HitboxRectangle(vec3(-4, -0.5, 0), vec3(0, 0.5, 0));
-    ennemy->behaviour=ronde;
-    ennemy->behaviour->ennemy=ennemy;
-
-    Bullet * newB = new Bullet();
-    newB->TTL = 2;
-    newB->parent=scene;
-    newB->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    newB->mesh = square.generateMesh(yellow_texture);
-    newB->transform.scale(0.25);
-    ennemy->bullet= newB;
-
-    scene->ennemies.push_back(ennemy);
 
     vector<vector<string>> map = readmap("map2.txt");
     for (int i = 0; i < map.size(); i++)
@@ -184,7 +159,8 @@ int main(void)
                 }
                 else if (map[i][j][0]=='P')
                 {
-                    Player * newPlayer = new Player(* getPlayerByID(0));
+                    map[i][j].erase(0,1);
+                    Player * newPlayer = new Player(* getPlayerByID(stoi(map[i][j])));
                     newPlayer->transform.translate(vec3(i, j, 0));
                     newPlayer->parent=scene;
                     newPlayer->bullet->parent=scene;
@@ -192,7 +168,13 @@ int main(void)
                 }
                 else if (map[i][j][0]=='E')
                 {
-                    continue;
+                    map[i][j].erase(0,1);
+                    Ennemy * newEnnemy = new Ennemy(* getEnnemyByID(stoi(map[i][j])));
+                    newEnnemy->transform.translate(vec3(i, j, 0));
+                    newEnnemy->parent=scene; 
+                    newEnnemy->behaviour->ennemy=newEnnemy;
+                    newEnnemy->bullet->parent=scene;
+                    scene->ennemies.push_back(newEnnemy);
                 }
                  
             }

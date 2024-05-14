@@ -36,12 +36,20 @@ void init(){
     obstacle->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
     obstacles.push_back(obstacle);
 
+    //Bullets
+
+    GLuint yellow_texture = loadTexture2DFromFilePath("Texture/yellow.png");
+    Bullet * bullet = new Bullet();
+    bullet->TTL = 2;
+    bullet->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    bullet->mesh = square.generateMesh(yellow_texture);
+    bullet->transform.scale(0.25);
+
     //players
 
     Player * player = new Player();
 
     GLuint steve_texture = loadTexture2DFromFilePath("Texture/steve.jpg");
-    GLuint yellow_texture = loadTexture2DFromFilePath("Texture/yellow.png");
 
     player->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
     player->mesh = square.generateMesh(steve_texture);
@@ -50,15 +58,28 @@ void init(){
     player->direction=1;
     player->HP=3;
     players.push_back(player);
-    Bullet * bullet = new Bullet();
-    bullet->TTL = 2;
-    bullet->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
-    bullet->mesh = square.generateMesh(yellow_texture);
-    bullet->transform.scale(0.25);
-    player->bullet= bullet;
+    player->bullet = bullet;
+    players.push_back(player);
 
     //Ennemies
-    GLuint red_texture = loadTexture2DFromFilePath("Texture/red.png");
+    GLuint red_texture = loadTexture2DFromFilePath("Texture/red.png");    
+    
+    Ennemy * ennemy = new Ennemy();
+    ennemy->hitbox = new HitboxRectangle(vec3(-0.5, -0.5, 0), vec3(0.5, 0.5, 0));
+    ennemy->mesh = square.generateMesh(red_texture);
+    ennemy->transform.scale(0.75);
+    ennemy->fireDelay=2;
+    ennemy->direction=-1;
+    ennemy->HP=3;
+
+    RondeBehaviour * ronde = new RondeBehaviour();
+    ronde->vision = new HitboxRectangle(vec3(-4, -0.5, 0), vec3(0, 0.5, 0));
+    
+    ennemy->behaviour=ronde;
+    ennemy->behaviour->ennemy=ennemy;
+    ennemy->bullet= bullet;
+    
+    ennemies.push_back(ennemy);
 }
 
 Obstacle * getObstacleByID(int id){

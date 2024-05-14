@@ -79,13 +79,13 @@ void Scene::init(){
     {
         obstacles[i]->mesh->init();
     }
-    for (int i = 0; i < ennemies.size(); i++)
-    {
-        ennemies[i]->mesh->init();
-    }
     for (int i = 0; i < players.size(); i++)
     {
         players[i]->mesh->init();
+    }
+    for (int i = 0; i < ennemies.size(); i++)
+    {
+        ennemies[i]->mesh->init();
     }
 }
 void Scene::draw(){

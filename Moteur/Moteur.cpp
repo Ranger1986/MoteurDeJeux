@@ -145,15 +145,16 @@ int main(void)
     vector<vector<string>> map = readmap("map2.txt");
     for (int i = 0; i < map.size(); i++)
     {
-        for (int j = 0; j < map[i].size(); j++)
+        for (int j = 0; j < map[0].size(); j++)
         {
             if (map[i][j][0]!='_')
             {
+                vec3 pos = vec3(j, map.size()-1-i,0);
                 if (map[i][j][0]=='O')
                 {
                     map[i][j].erase(0,1);
                     Obstacle * newObstacle = new Obstacle(* getObstacleByID(stoi(map[i][j])));
-                    newObstacle->transform.translate(vec3(i, j, 0));
+                    newObstacle->transform.translate(pos);
                     newObstacle->parent=scene;
                     scene->obstacles.push_back(newObstacle);
                 }
@@ -161,7 +162,7 @@ int main(void)
                 {
                     map[i][j].erase(0,1);
                     Player * newPlayer = new Player(* getPlayerByID(stoi(map[i][j])));
-                    newPlayer->transform.translate(vec3(i, j, 0));
+                    newPlayer->transform.translate(pos);
                     newPlayer->parent=scene;
                     newPlayer->bullet->parent=scene;
                     scene->players.push_back(newPlayer);
@@ -170,13 +171,13 @@ int main(void)
                 {
                     map[i][j].erase(0,1);
                     Ennemy * newEnnemy = new Ennemy(* getEnnemyByID(stoi(map[i][j])));
-                    newEnnemy->transform.translate(vec3(i, j, 0));
+                    newEnnemy->transform.translate(pos);
+                    newEnnemy->behaviour= newEnnemy->behaviour->copy();
                     newEnnemy->parent=scene; 
                     newEnnemy->behaviour->ennemy=newEnnemy;
                     newEnnemy->bullet->parent=scene;
                     scene->ennemies.push_back(newEnnemy);
                 }
-                 
             }
         }
     }
@@ -270,10 +271,6 @@ void processInput(GLFWwindow *window)
     }
     else
         player->vitesse.x=0; //a trouver un meilleur moyen de gerer la fin de deplacement du joueur
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        player->parent->ennemies[0]->behaviour->update();
-    }
     
     camera_target = player->transform.getTranslation();
     camera_position = vec3(camera_target.x, camera_target.y, camera_position.z);

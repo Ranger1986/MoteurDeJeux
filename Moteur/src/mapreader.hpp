@@ -24,32 +24,19 @@ vector<vector<string>> readmap(const std::string &path)
     vector<vector<string>> temp = vector<vector<string>>();
     inputFile >> height;
     inputFile >> width;
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < height; i++)
     {
         vector<string> ligne = vector<string>();
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < width; j++)
         {
             inputFile >> word;
             ligne.push_back(word);
+            std::cout << word;
             word="";
         }
+        std::cout << std::endl;
         temp.push_back(ligne);
     }
-
-    for (int i = 0; i < temp[0].size(); i++)
-    {
-        result.push_back(vector<string>());
-    }
-
-    for (int i = 0; i < temp.size(); i++)
-    {
-        for (int j = temp[i].size() - 1; j >= 0; j--)
-        {
-            result[i].push_back(temp[j][i]);
-        }
-    }
-
     inputFile.close();
-
-    return result;
+    return temp;
 }

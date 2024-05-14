@@ -6,7 +6,7 @@ Ennemy::Ennemy(){}
 Ennemy::~Ennemy(){}
 void Ennemy::applyPhysics(float deltaTime)
 {
-    behaviour->update();
+    behaviour->update(deltaTime);
     nextFire-=deltaTime;
     acceleration=parent->gravity;
     vitesse = (vitesse + acceleration * deltaTime) * 0.99f;

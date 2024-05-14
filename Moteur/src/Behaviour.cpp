@@ -10,28 +10,32 @@ Behaviour::~Behaviour()
 
 TourelleBehaviour::TourelleBehaviour(/* args */)
 {
+    type = BehaviourType::Tourelle;
 }
 
 TourelleBehaviour::~TourelleBehaviour()
 {
 }
 
-void TourelleBehaviour::update(){
+void TourelleBehaviour::update(float deltaTime){
     if (ennemy->nextFire<0)
     {
         ennemy->tir();
     }
 }
-
+Behaviour * TourelleBehaviour::copy(){
+    return new TourelleBehaviour(* this);
+}
 RondeBehaviour::RondeBehaviour(/* args */)
 {
+    type = BehaviourType::Ronde;
 }
 
 RondeBehaviour::~RondeBehaviour()
 {
 }
 
-void RondeBehaviour::update(){    
+void RondeBehaviour::update(float deltaTime){    
     bool playerFound=false;
     vector<HitboxRectangle *> hitboxs = ennemy->parent->getPlayersHitboxs();
     int iteration=0;
@@ -55,29 +59,36 @@ void RondeBehaviour::update(){
 
     Transform futureXY = ennemy->transform;
     futureXY.translate(vec3(ennemy->direction, -1, 0));
+
+    Transform futureX = ennemy->transform;
+    futureX.translate(vec3(ennemy->direction * deltaTime, 0, 0));
+
     hitboxs = ennemy->parent->getObstaclesHitboxs();
     iteration=0;
-    bool denied =false;
-    while (iteration < hitboxs.size() && !denied)
+    bool canWalk =false;
+    bool hitWall =false;
+    while (iteration < hitboxs.size() && !hitWall)
     {
-        if (rectangleToRectangle(Node::getTransformedHitbox(ennemy->hitbox, futureXY), hitboxs[iteration]))
+        if (!canWalk && rectangleToRectangle(Node::getTransformedHitbox(ennemy->hitbox, futureXY), hitboxs[iteration]))
         {
-            denied = true;
+            canWalk = true;
+        }
+        if (rectangleToRectangle(Node::getTransformedHitbox(ennemy->hitbox, futureX), hitboxs[iteration]))
+        {
+            hitWall = true;
         }
         iteration++;
     }
-    if (!denied)
+    if (!canWalk || hitWall)
     {
         ennemy->direction*=-1;
         Transform inverse = Transform();
         inverse.scale(vec3(-1,0,0));
         vision = Node::getTransformedHitbox(vision, inverse);
-        /*
-        std::cout << "Min Max" << std::endl;
-        std::cout << vision->min.x << "," << vision->min.y << std::endl;
-        std::cout << vision->max.x << "," << vision->max.y << std::endl;
-        */
     }
-    ennemy->vitesse.x=ennemy->direction;
-    
+    ennemy->vitesse.x=ennemy->direction;  
+}
+
+Behaviour * RondeBehaviour::copy(){
+    return new RondeBehaviour(* this);
 }

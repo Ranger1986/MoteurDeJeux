@@ -3,17 +3,21 @@
 
 #include "Ennemy.hpp"
 
+enum BehaviourType { Tourelle, Ronde};
+
 class Ennemy;
 
 class Behaviour
 {
 public:
+    BehaviourType type;
     Ennemy * ennemy;
 
     Behaviour(/* args */);
     ~Behaviour();
 
-    virtual void update()= 0;
+    virtual void update(float deltaTime)= 0;
+    virtual Behaviour * copy()=0;
 };
 
 class TourelleBehaviour : public Behaviour
@@ -22,7 +26,8 @@ public:
     TourelleBehaviour(/* args */);
     ~TourelleBehaviour();
 
-    void update() override;
+    void update(float deltaTime) override;
+    Behaviour * copy() override;
 };
 class RondeBehaviour : public Behaviour
 {
@@ -32,7 +37,8 @@ public:
     RondeBehaviour(/* args */);
     ~RondeBehaviour();
 
-    void update() override;
+    void update(float deltaTime) override;
+    Behaviour * copy() override;
 };
 
 

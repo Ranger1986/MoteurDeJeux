@@ -142,7 +142,7 @@ int main(void)
     Quad square = Quad(vec3(0, 0, 0), 1);
     init();
 
-    vector<vector<string>> map = readmap("mapDemo.txt");
+    vector<vector<string>> map = readmap("map2.txt");
     for (int i = 0; i < map.size(); i++)
     {
         for (int j = 0; j < map[0].size(); j++)
@@ -258,7 +258,7 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         player->jump();
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-        player->vitesse.y-=10*deltaTime;
+        player->vitesse.y-=25*deltaTime;
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {

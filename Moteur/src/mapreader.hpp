@@ -31,10 +31,8 @@ vector<vector<string>> readmap(const std::string &path)
         {
             inputFile >> word;
             ligne.push_back(word);
-            std::cout << word;
             word="";
         }
-        std::cout << std::endl;
         temp.push_back(ligne);
     }
     inputFile.close();

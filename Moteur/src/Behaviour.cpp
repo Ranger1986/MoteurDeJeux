@@ -64,10 +64,6 @@ void RondeBehaviour::update(float deltaTime){
                 {
                     detected = false;
                 }
-                std::cout << "obstacle et ennemy" << std::endl;
-                std::cout << playerPos << std::endl;
-                std::cout << obstaclePos << std::endl;
-                std::cout << ennemyPos << std::endl;
             }
             iteration++;
         }

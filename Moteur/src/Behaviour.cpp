@@ -37,7 +37,7 @@ void RondeBehaviour::update(float deltaTime){
     bool playerFound=false;
     vector<HitboxRectangle *> hitboxs = ennemy->parent->getPlayersHitboxs();
     bool detected=false;
-    int playerPos;
+    float playerPos;
     int iteration = 0;
     while (!detected && iteration < hitboxs.size())
     {
@@ -51,14 +51,14 @@ void RondeBehaviour::update(float deltaTime){
     
     if (detected)
     {
-        int ennemyPos=(Node::getTransformedHitbox(ennemy->hitbox, ennemy->transform)->min.x+Node::getTransformedHitbox(ennemy->hitbox, ennemy->transform)->max.x)/2;
+        float ennemyPos=(Node::getTransformedHitbox(ennemy->hitbox, ennemy->transform)->min.x+Node::getTransformedHitbox(ennemy->hitbox, ennemy->transform)->max.x)/2;
         hitboxs = ennemy->parent->getObstaclesHitboxs();
         iteration =0;
         while(detected && iteration < hitboxs.size())
         {
             if (rectangleToRectangle(Node::getTransformedHitbox(vision, ennemy->transform), hitboxs[iteration]))
             {
-                int obstaclePos= (hitboxs[iteration]->min.x+hitboxs[iteration]->max.x)/2;
+                float obstaclePos= (hitboxs[iteration]->min.x+hitboxs[iteration]->max.x)/2;
                 if ((playerPos<obstaclePos&&obstaclePos<ennemyPos)||
                     (ennemyPos<obstaclePos&&obstaclePos<playerPos))
                 {

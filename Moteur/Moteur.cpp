@@ -108,7 +108,7 @@ int main(void)
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
-    glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+    glfwSetCursorPos(window, 1920*9/10, 1080 *9/10);
 
     // Dark blue background
     glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
@@ -142,7 +142,7 @@ int main(void)
     Quad square = Quad(vec3(0, 0, 0), 1);
     init();
 
-    vector<vector<string>> map = readmap("map2.txt");
+    vector<vector<string>> map = readmap("map.txt");
     for (int i = 0; i < map.size(); i++)
     {
         for (int j = 0; j < map[0].size(); j++)

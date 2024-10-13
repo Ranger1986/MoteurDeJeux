@@ -1,8 +1,9 @@
 # Moteur de jeux
 
 ## Contexte
+
 Ce projet a été réalisé dans le cadre de la matière Moteur de Jeu dans le master informatique IMAGINE de la faculté des sciences de Montpellier.
-Le but de ce moteur de jeux est de pouvoir 
+Le but de ce moteur de jeux est de pouvoir créer un broforce like.
 
 Encadrant:
 - Noura FARAJ
